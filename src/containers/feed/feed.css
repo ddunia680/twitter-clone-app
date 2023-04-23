@@ -1,0 +1,3 @@
+.feed::-webkit-scrollbar {
+    display: none;
+}
