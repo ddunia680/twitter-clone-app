@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Spinner from '../../UI/spinner/spinner';
-import { XCircleIcon, EyeIcon, UserCircleIcon, MapPinIcon, LinkIcon } from '@heroicons/react/24/solid';
+import { XCircleIcon, EyeIcon, UserCircleIcon, UserIcon,  MapPinIcon, LinkIcon } from '@heroicons/react/24/solid';
 
 import './signUp.css';
 import axios from 'axios';
@@ -9,6 +9,7 @@ function SignUp(props) {
     const [passwordType, setPasswordType] = useState('password');
     const [confPType, setConfPType] = useState('password')
 
+    const [coverPic, setCoverPic] = useState('');
     const [profilePic, setProfilePic] = useState('');
     const [fullName, setFullname] = useState('');
     const [tagName, setTagName] = useState('');
@@ -45,13 +46,12 @@ function SignUp(props) {
     const [bioError, setBioError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [confPasswordError, setConfPassError] = useState('');
-    const [locationError, setLocationError] = useState('');
-    const [websiteError, setWebsiteError] = useState('');
 
     const [formIsValid, setFormValidity] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const userProfileRef = useRef();
+    const userCoverRef = useRef();
 
     const fullNameClasses = ['relative w-[90%] md:w-[60%] bg-iconsColor flex justify-between items-center px-1 rounded-full border-b-[5px]', fullNameIsTouched && !fullNameIsValid ? 'border-redText' : 'border-blueSpecial'];
 
@@ -70,13 +70,13 @@ function SignUp(props) {
     const websiteClasses = ['relative w-[90%] md:w-[40%] bg-gray-900 bg-opacity-50 flex justify-between items-center px-1 border-b-[5px]', websiteIsTouched && !websiteIsValid ? 'border-redText' : 'border-blueSpecial'];
 
     useEffect(() => {
-        if(profilePic && fullNameIsValid && tagNameIsValid && bioIsValid && emailIsValid && passwordIsValid && confPasswordIsValid) {
+        if( coverPic && profilePic && fullNameIsValid && tagNameIsValid && bioIsValid && emailIsValid && passwordIsValid && confPasswordIsValid) {
             setFormValidity(true);
         } else {
             setFormValidity(false);
         }
-    }, [profilePic, fullNameIsValid, tagNameIsValid, bioIsValid, emailIsValid, passwordIsValid, confPasswordIsValid]);
-    console.log(process.env.APP_BACKEND_URL);
+    }, [coverPic, profilePic, fullNameIsValid, tagNameIsValid, bioIsValid, emailIsValid, passwordIsValid, confPasswordIsValid]);
+    // console.log(process.env.REACT_APP_BACKEND_URL);
     const formValidationHandler = (type, value) => {
         switch(type) {
             case "fullname":
@@ -137,7 +137,7 @@ function SignUp(props) {
                 break;
             case "website":
                 setWebsiteIsTouched(true);
-                if(value.includes('www.') && value.length >= 5){
+                if(value.includes('http') && value.length >= 5){
                     setWebsiteIsValid(true);
                 } else {
                     setWebsiteIsValid(false);
@@ -150,63 +150,79 @@ function SignUp(props) {
     
     const signUpHandler = () => {
         setLoading(true);
-        let data
-        if(website && location) {
-            data = new FormData();
-            data.append('myFile', profilePic);
-            data.append('fullName', fullName);
-            data.append('tagName', tagName);
-            data.append('email', email);
-            data.append('bio', bio);
-            data.append('password', password);
-            data.append('confirmPass', confPassword);
-            data.append('website', website);
-            data.append('location', location);
-        } else if (website && !location) {
-            data = new FormData();
-            data.append('myFile', profilePic);
-            data.append('fullName', fullName);
-            data.append('tagName', tagName);
-            data.append('email', email);
-            data.append('bio', bio);
-            data.append('password', password);
-            data.append('confirmPass', confPassword);
-            data.append('website', website);
-        } else if(!website && location) {
-            data = new FormData();
-            data.append('myFile', profilePic);
-            data.append('fullName', fullName);
-            data.append('tagName', tagName);
-            data.append('email', email);
-            data.append('bio', bio);
-            data.append('password', password);
-            data.append('confirmPass', confPassword);
-            data.append('location', location);
-        }
+            const form = new FormData();
+            form.append('photos', coverPic);
+            form.append('photos', profilePic);
+            form.append('fullName', fullName);
+            form.append('tagName', tagName);
+            form.append('email', email);
+            form.append('bio', bio);
+            form.append('password', password);
+            form.append('confirmPass', confPassword);
+            form.append('website', website);
+            form.append('location', location);
         
-        axios.put(`${process.env.APP_BACKEND_URL}/auth/singup`, data)
+        axios.put(`${process.env.REACT_APP_BACKEND_URL}/auth/register`, form, {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        })
         .then(res => {
             setLoading(false);
             console.log(res.data.message);
+            props.setInSignUp(false);
         })
         .catch(err => {
             setLoading(false);
             console.log(err);
             const theMessage = err.response.data.message;
+            if(theMessage.includes('fullname')) {
+                setFullNameError(theMessage);
+                setFullNameIsValid(false);
+            } else if(theMessage.includes('tagName')) {
+                setTagNameError(theMessage);
+                setTagNameIsValid(false);
+            } else if(theMessage.includes('email')) {
+                setEmailError(theMessage);
+                setEmailIsValid(false);
+            } else if(theMessage.includes('bio')) {
+                setBioError(theMessage);
+                setBioIsValid(false);
+            } else if(theMessage.includes('password')) {
+                setPasswordError(theMessage);
+                setPasswordIsValid(false);
+            } else if(theMessage.includes('confirm')) {
+                setConfPassError(theMessage);
+                setConfPassIsValid(false);
+            } else {
+                alert(theMessage);
+            }
         })
     }
 
     return (
         <div className='viewShadow w-[100%] md:w-2/3 h-[100vh] bg-gradient-to-br from-darkClose to-blueLight p-[2rem] flex flex-col justify-start items-center space-y-7 overflow-y-scroll'>
             <h1 className='text-2xl md:text-4xl font-semibold text-center'>Create an Account with us </h1>
-            
-            <div className='flex flex-col justify-start items-center'>
-                <input type='file' className='hidden' ref={userProfileRef} onChange={e => setProfilePic(e.target.files[0])}/>
+            <input type='file' className='hidden' ref={userCoverRef} onChange={e => setCoverPic(e.target.files[0])}/>
+            <input type='file' className='hidden' ref={userProfileRef} onChange={e => setProfilePic(e.target.files[0])}/>
+            <div className='flex flex-col justify-center items-center bg-darkClose h-[10rem] w-[90%] md:w-[70%]rounded-lg'>
+                <div className='w-[98%] h-[9rem] bg-gray-700 rounded-lg flex justify-between items-center p-1 md:p-3'>
+                    <p>Your Cover Pic</p>
+                    {/* Cover Picture */}
+                     { !coverPic ? <UserIcon className='w-[5rem] md:w-[7rem]' onClick={() => userCoverRef.current.click()} title='Your Cover pic'/> :
+                     <div className='relative w-[5rem] md:w-[7rem] h-[5rem] md:h-[7rem] rounded-full bg-darkClose overflow-hidden'>
+                        <img src={ URL.createObjectURL(coverPic)} alt='' className='w-[100%] h-[100%] object-contain'/>
+                        <XCircleIcon className='absolute bottom-1 right-6 w-[1.5rem] text-red-700 hover:text-red-300' title='remove?' onClick={() => setCoverPic('')}/>
+                    </div>}
+                </div>
+                {/* Profile picture */}
                 { !profilePic ?
-                    <UserCircleIcon className='w-[5rem] md:w-[7rem] text-iconsColor hover:text-blueLight' onClick={() => userProfileRef.current.click()} title='click to choose picture' />
+                    <div className=' mt-[-2rem] md:mt-[-4rem] w-[5rem] md:w-[7rem] p-0'>
+                        <UserCircleIcon className='w-[100%] text-iconsColor rounded-full hover:text-gray-500' onClick={() => userProfileRef.current.click()} title='click to choose picture' />
+                    </div>
                 :
-                    <div className='relative w-[5rem] md:w-[7rem] h-[5rem] md:h-[7rem] rounded-full bg-blueLight overflow-hidden'>
-                        <img src={ URL.createObjectURL(profilePic)} alt='' className='w-[100%] h-[100%] object-contain'/>
+                    <div className='relative mt-[-2rem] md:mt-[-4rem] w-[5rem] md:w-[7rem] h-[5rem] md:h-[7rem] rounded-full bg-darkClose overflow-hidden'>
+                        <img src={ URL.createObjectURL(profilePic)} alt='' className='w-[100%] h-[100%] object-contain rounded-full'/>
                         <XCircleIcon className='absolute bottom-1 right-6 w-[1.5rem] text-red-700 hover:text-red-300' title='remove?' onClick={() => setProfilePic('')}/>
                     </div>
                 }
@@ -288,7 +304,6 @@ function SignUp(props) {
                             setLocation(e.target.value);
                             formValidationHandler('location', e.target.value);
                         }} value={location}/>
-                        <p className='absolute top-[0.9rem] text-sm text-red-700 m-[2rem]'>{locationError}</p>
                     </div>
 
                     {/* personal website */}
@@ -298,7 +313,6 @@ function SignUp(props) {
                             setwebsite(e.target.value);
                             formValidationHandler('website', e.target.value);
                         }} value={website}/>
-                        <p className='absolute top-[0.9rem] text-sm text-red-700 m-[2rem]'>{websiteError}</p>
                     </div>
                 </div>
                 <p className='text-green-500 hover:text-green-100 cursor-pointer' onClick={() => setMore(false)}>Hide Section?</p></>

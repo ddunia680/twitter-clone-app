@@ -6,8 +6,14 @@ import { XCircleIcon, EyeIcon } from '@heroicons/react/24/solid';
 import Spinner from '../../UI/spinner/spinner';
 
 import './signIn.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { AUTHENTICATE } from '../../store/authenticate';
 
 function SignIn(props) {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [passwordType, setPasswordType] = useState('password');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -61,6 +67,65 @@ function SignIn(props) {
 
     const signInHandler = () => {
         setLoading(true);
+        const data = {
+            email: email,
+            password: password
+        }
+
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {...data})
+        .then(res => {
+            setLoading(false);
+            localStorage.setItem('token', res.data.token);
+            localStorage.setItem('userId', res.data.userId);
+            localStorage.setItem('profileUrl', res.data.profileUrl);
+            localStorage.setItem('coverUrl', res.data.coverUrl);
+            localStorage.setItem('tagName', res.data.tagName);
+            localStorage.setItem('fullname', res.data.fullname);
+            localStorage.setItem('bio', res.data.bio);
+            localStorage.setItem('email', res.data.email);
+            localStorage.setItem('profileUrl', res.data.profileUrl);
+            localStorage.setItem('createdAt', res.data.createdAt);
+            if(res.data.website) {
+                localStorage.setItem('website', res.data.website);
+            } 
+            if(res.data.location) {
+                localStorage.setItem('location', res.data.location);
+            }
+            const remainingMilliseconds = 60 * 60 * 1000;
+            const expiryDate = new Date(
+                new Date().getTime() + remainingMilliseconds
+            );
+            localStorage.setItem('expiryDate', expiryDate.toISOString());
+
+            const authData = {
+                token: res.data.token,
+                profileUrl: res.data.profileUrl,
+                coverUrl: res.data.coverUrl,
+                userId: res.data.userId,
+                fullname: res.data.fullname,
+                tagName: res.data.tagName,
+                bio: res.data.bio,
+                email: res.data.email,
+                location: res.data.location,
+                website: res.data.website,
+                createdAt: res.data.createdAt
+            }
+            dispatch(AUTHENTICATE({...authData}));
+            navigate('/main');
+            
+        })
+        .catch(err => {
+            setLoading(false);
+            console.log(err);
+            const theMessage = err.response.data.message;
+            if(theMessage.includes('email')) {
+                setEmailError(theMessage);
+                setEmailIsValid(false);
+            } else if(theMessage.includes('password')) {
+                setPasswordError(theMessage);
+                setPasswordIsValid(false);
+            }
+        })
     }
 
     return (

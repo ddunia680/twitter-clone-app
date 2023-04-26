@@ -1,10 +1,21 @@
-import React from 'react';
-import { HomeIcon, UserCircleIcon, EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
+import React, { useState } from 'react';
+import { HomeIcon, EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import { HashtagIcon, UsersIcon, BellIcon, EnvelopeIcon, BookmarkIcon, UserIcon, EllipsisHorizontalCircleIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { LOGOUT } from '../../store/authenticate';
+import { useNavigate } from 'react-router-dom';
 
 function LeftMenu(props) {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const userId = useSelector(state => state.authenticate.userId)
+    const profileUrl = useSelector(state => state.authenticate.profileUrl);
+    const fullname = useSelector(state => state.authenticate.fullname);
+    const tagName = useSelector(state => state.authenticate.tagName);
+
+    const [showLogout, setShowLogout] = useState(false);
     return (
         <div className='hidden md:flex relative w-[10%] xl:w-[20%] h-[100vh] flex-col justify-start items-center xl:items-start p-[1rem] border-r-[1px] border-darkClose space-y-2 font-mono'>
             {/* The bird */}
@@ -63,7 +74,7 @@ function LeftMenu(props) {
             </div> */}
 
             {/* Profile */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' onClick={() => navigate(`${userId}`)}>
                 <UserIcon className='w-[1.7rem]'/>
                 <h2 className='hidden xl:block text-xl text-iconsColor'>Profile</h2>
             </div>
@@ -82,17 +93,24 @@ function LeftMenu(props) {
 
             {/* Logged in user */}
             <div className='absolute bottom-5 left-0 w-[90%] py-[1rem] px-[0.5rem] duration-75 flex justify-center xl:justify-start items-center rounded-full hover:bg-darkClose hover:duration-75 cursor-pointer'>
-                {/* <div className='w-[3rem] h-[3rem] rounded-full overflow-hidden bg-gray-700'>
-                    <img src={} alt='' className='w-[100%] h-[100%] object-contain'/>
-                </div> */}
-                <UserCircleIcon className='text-gray-600 w-[3rem]'/>
+                <div className='w-[3rem] h-[3rem] rounded-full overflow-hidden bg-gray-700' title={tagName} onClick={() => navigate(`${userId}`)}>
+                    <img src={profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
+                </div>
+                {/* <UserCircleIcon className='text-gray-600 w-[3rem]'/> */}
                     <div className=' hidden xl:flex justify-between items-center w-[90%] pl-1'>
                         <div className='flex flex-col jusify-between items-start'>
-                            <p className='text-gray-50 font-semibold'>Dunia Dunia</p>
-                            <p className='text-gray-400'>@Dunia_Dunia5</p>
+                            <p className='text-gray-50 font-semibold md:w-[90%] whitespace-nowrap overflow-x-hidden overflow-ellipsis hover:underline' onClick={() => {
+                                navigate(`${userId}`);
+                                
+                                }}>{fullname}</p>
+                            <p className='text-gray-400 md:w-[90%] whitespace-nowrap overflow-x-hidden overflow-ellipsis'>{tagName}</p>
                         </div>
-                        <EllipsisHorizontalIcon className='w-[1.5rem] mx-1'/>
-                    </div>                                
+                        <EllipsisHorizontalIcon className='w-[1.5rem] mx-1 rounded-full hover:text-blueSpecial hover:bg-blueLight' onClick={() => setShowLogout(!showLogout)}/>
+                    </div>
+                    { showLogout ? <div className='absolute top-[-1rem] right-0 px-4 py-2 rounded-lg bg-darkClose text-iconsColor duration-150 hover:bg-redBg hover:text-redText hover:duration-150 popUp' onClick={() => {
+                        setShowLogout(false);
+                        dispatch(LOGOUT());
+                        }}>Logout</div> :null}                             
             </div>
         </div>
     );
