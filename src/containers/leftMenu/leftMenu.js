@@ -24,7 +24,7 @@ function LeftMenu(props) {
             </div>
             
             {/* Home */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Home'>
                 <div className='relative'>
                     <HomeIcon className='w-[1.7rem]'/>
                     <div className='absolute top-[-2px] right-0 bg-blueSpecial w-[8px] h-[8px] rounded-full'></div>
@@ -34,19 +34,19 @@ function LeftMenu(props) {
             </div>
 
             {/* Explore */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Explore'>
                 <HashtagIcon className='w-[1.7rem]'/>
                 <h2 className='hidden xl:block text-xl text-iconsColor'>Explore</h2>
             </div>
 
             {/* Community */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Community'>
                 <UsersIcon className='w-[1.7rem]'/>
                 <h2 className='hidden xl:block text-xl text-iconsColor'>Community</h2>
             </div>
 
             {/* Notifications */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Notifications'>
                 <div className='relative'>
                     <BellIcon className='w-[1.7rem]'/>
                     <div className='absolute top-[-3px] right-[-5px] bg-blueSpecial py-[1px] px-[6px] rounded-full text-[10px] border-[1px] border-primary'>1</div>
@@ -56,13 +56,13 @@ function LeftMenu(props) {
             </div>
 
             {/* Messages */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Messages'>
                 <EnvelopeIcon className='w-[1.7rem]'/>
                 <h2 className='hidden xl:block text-xl text-iconsColor'>Messages</h2>
             </div>
 
             {/* Bookmarks */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Bookmarks'>
                 <BookmarkIcon className='w-[1.7rem]'/>
                 <h2 className='hidden xl:block text-xl text-iconsColor'>Bookmarks</h2>
             </div>
@@ -74,19 +74,19 @@ function LeftMenu(props) {
             </div> */}
 
             {/* Profile */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' onClick={() => navigate(`${userId}`)}>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='profile' onClick={() => navigate(`${userId}`)}>
                 <UserIcon className='w-[1.7rem]'/>
                 <h2 className='hidden xl:block text-xl text-iconsColor'>Profile</h2>
             </div>
 
             {/* More */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='more'>
                 <EllipsisHorizontalCircleIcon className='w-[1.7rem]'/>
                 <h2 className='hidden xl:block text-xl text-iconsColor'>More</h2>
             </div>
 
             {/* Tweet */}
-            <div className=' px-[1rem] xl:px-[5rem] py-[1rem] text-lg font-bold bg-blueSpecial rounded-full cursor-pointer'>
+            <div className=' px-[1rem] xl:px-[5rem] py-[1rem] text-lg font-bold bg-blueSpecial rounded-full cursor-pointer' title='tweet'>
                 <PlusIcon className='w-[2rem] block xl:hidden'/>
                 <p className='hidden xl:block'>Tweet</p>
             </div>

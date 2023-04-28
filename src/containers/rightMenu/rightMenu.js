@@ -13,7 +13,7 @@ function RightMenu(props) {
         // console.log(input);
     }
     return (
-        <div className='rightMenu hidden md:flex w-[30%] h-[100%] flex-col justify-start items-start px-[2rem] border-l-[1px] border-darkClose overflow-y-scroll'>
+        <div className='rightMenu flex w-[100vw] md:w-[30%] h-[100%] flex-col justify-start items-start px-[2rem] border-l-[1px] border-darkClose overflow-y-scroll'>
             <SearchBar filter={false} placeHolder="Search Twitter" filterValue={searchHandler}/>
             { !connectIU ? 
                 <YouMightLike/>

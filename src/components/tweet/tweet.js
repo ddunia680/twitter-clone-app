@@ -25,11 +25,11 @@ function Tweet(props) {
             <div className='relative w-[80%] flex flex-col justify-start items-start pt-1'>
                 {/* User identity */}
                 <div className='text-[13px] md:text-[15px] w-[90%] flex justify-start items-start cursor-pointer'>
-                    <p className='w-3/4 md:w-[90%] whitespace-nowrap overflow-x-hidden overflow-ellipsis'>
+                    <p className='w-3/4 md:w-[50%] xl:w-[90%] whitespace-nowrap overflow-x-hidden overflow-ellipsis'>
                         <span className='text-iconsColor font-bold duration-75 hover:underline hover:duration-75' onMouseEnter={() => { setTimeout(() => { setShowPopUp(true)}, 1000)}} onMouseLeave={() => { setTimeout(() => {setShowPopUp(false)}, 1000) }} onClick={() => dispatch(SETONUSERIDENTITY())}>Michael Asiedu</span> 
                         <span className='text-darkTextColor'>@MichaelAsiedu_.</span>
                     </p> 
-                    <p className='text-darkTextColor'> {months[new Date().getMonth()]} {new Date().getDate()}</p>
+                    <p className='text-darkTextColor w-[3rem]'> {months[new Date().getMonth()]} {new Date().getDate()}</p>
 
                     {/* identity popup */}
                     { showPopUp ? 

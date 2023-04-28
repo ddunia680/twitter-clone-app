@@ -15,7 +15,7 @@ function FeedHead(props) {
     const onFollowingClasses = ['w-fit h-[100%] mx-auto border-b-[5px] text-sm md:text-md py-2', onFolliwing ? 'border-blueSpecial' : 'border-transparent'];
     const onUpdatesClasses = ['w-fit h-[100%] mx-auto border-b-[5px] text-sm md:text-md py-2', onUpdates ? 'border-blueSpecial' : 'border-transparent'];
     return (
-            <div className='sticky md:fixed w-[100%] md:w-[40%] h-[16vh] md:h-[12vh] bg-primary border-b-[1px] border-darkClose flex flex-col justify-between items-start backdrop-blur-md bg-opacity-80 z-10'>
+            <div className='sticky md:fixed w-[100%] md:w-[50%] xl:w-[38%] h-[16vh] md:h-[12vh] bg-primary border-b-[1px] border-darkClose flex flex-col justify-between items-start backdrop-blur-md bg-opacity-80 z-10'>
                 {/* Title */}
                 <div className='flex justify-between items-center w-[100%] p-2'>
                     <h2 className='hidden md:block text-2xl font-bold px-3'>Home</h2>

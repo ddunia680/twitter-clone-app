@@ -222,7 +222,7 @@ function SignUp(props) {
                     </div>
                 :
                     <div className='relative mt-[-2rem] md:mt-[-4rem] w-[5rem] md:w-[7rem] h-[5rem] md:h-[7rem] rounded-full bg-darkClose overflow-hidden'>
-                        <img src={ URL.createObjectURL(profilePic)} alt='' className='w-[100%] h-[100%] object-contain rounded-full'/>
+                        <img src={ URL.createObjectURL(profilePic)} alt='' className='w-[100%] h-[100%] object-contain'/>
                         <XCircleIcon className='absolute bottom-1 right-6 w-[1.5rem] text-red-700 hover:text-red-300' title='remove?' onClick={() => setProfilePic('')}/>
                     </div>
                 }
@@ -300,7 +300,7 @@ function SignUp(props) {
                     {/* Location */}
                     <div className={locationClasses.join(' ')}>
                         <MapPinIcon className='w-[1.3rem] text-gray-700' />
-                        <input className='h-[3rem] w-[95%] bg-transparent focus:outline-none text-darkClose px-2' placeholder='Your location' onChange={e => {
+                        <input className='h-[3rem] w-[95%] bg-transparent focus:outline-none text-iconsColor px-2' placeholder='Your location' onChange={e => {
                             setLocation(e.target.value);
                             formValidationHandler('location', e.target.value);
                         }} value={location}/>
@@ -309,7 +309,7 @@ function SignUp(props) {
                     {/* personal website */}
                     <div className={websiteClasses.join(' ')}>
                         <LinkIcon className='w-[1.3rem] text-gray-700' />
-                        <input className='h-[3rem] w-[95%] bg-transparent focus:outline-none text-darkClose px-2' placeholder='Your website' onChange={e => {
+                        <input className='h-[3rem] w-[95%] bg-transparent focus:outline-none text-iconsColor px-2' placeholder='Your website' onChange={e => {
                             setwebsite(e.target.value);
                             formValidationHandler('website', e.target.value);
                         }} value={website}/>

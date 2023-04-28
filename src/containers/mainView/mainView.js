@@ -3,27 +3,21 @@ import LeftMenu from '../leftMenu/leftMenu';
 import RightMenu from '../rightMenu/rightMenu';
 import Feed from '../feed/feed';
 import UserIdentity from '../../components/userIdentity/userIdentity';
-import BottomMenu from '../bottomMenu/bottomMenu';
-import ConnectView from '../connectView/connectView';
+// import BottomMenu from '../bottomMenu/bottomMenu';
 import { useSelector } from 'react-redux';
 
 function MainView(props) {
     const onUserIdentity = useSelector(state => state.uiStates.onUserIdentity);
-    const connectIU = useSelector(state => state.uiStates.connectIU);
     return (
-        <div className=' relative w-[100%] h-[100vh] flex justify-start items-start '>
-            <LeftMenu/>
+        <div className=' relative w-[100%] h-[100vh] flex justify-start items-start'>
+            { window.innerWidth > 500 ? <LeftMenu/> : null}
             { !onUserIdentity ?  
                 <Feed/>
             :
                 <UserIdentity/>
             }
-            <RightMenu/>
-            <BottomMenu/>
-            {connectIU ? 
-                <ConnectView/>
-            : null}
-            
+            { window.innerWidth > 500 ? <RightMenu/> :null}
+            {/* <BottomMenu/>             */}
         </div>
     );
 }

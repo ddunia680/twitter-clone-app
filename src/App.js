@@ -7,6 +7,9 @@ import AuthContainer from './containers/authContainer/authContainer';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { KEEPAUTHENTICATED, LOGOUT } from './store/authenticate';
+import ConnectView from './containers/connectView/connectView';
+import RightMenu from './containers/rightMenu/rightMenu';
+import BottomMenu from './containers/bottomMenu/bottomMenu';
 
 function App() {
   const dispatch = useDispatch();
@@ -54,11 +57,12 @@ function App() {
         <Route path="/main">
           <Route index  element={<MainView/>} />
           <Route path='editProfile' element={<EditProfile/>}/>
+          <Route path='connect' element={<ConnectView/>} />
           <Route path=':id' element={<UserIdentity/>}/>
-
         </Route>
+        { window.innerWidth <= 500 ? <Route path='search' element={<RightMenu/>} /> : null}
       </Routes>
-      
+      { window.innerWidth <= 500 ? <BottomMenu/> : null}
     </div>
   );
 }
