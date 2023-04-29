@@ -61,19 +61,19 @@ function ToFollow(props) {
                 <div className='w-[2.5rem] md:w-[3.2rem] h-[2.5rem] md:h-[3.2rem] rounded-full overflow-hidden bg-gray-800'>
                     <img src={props.user.profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
                 </div>
-                <div className='flex flex-col justify-start items-start w-[60%] ml-[5px]'> 
-                    <h4 className='text-md font-bold text-iconsColor h-[1.6rem] w-[100%] whitespace-nowrap overflow-x-hidden overflow-ellipsis hover:underline' onClick={() => {
+                <div className='flex flex-col justify-start items-start w-[80%] md:w-[60%] ml-[5px]'> 
+                    <h4 className='text-[12px] md:text-[15px] font-bold text-iconsColor h-[1.6rem] w-[100%] whitespace-nowrap overflow-x-hidden overflow-ellipsis hover:underline' onClick={() => {
                         navigate(`/main/${props.user._id}`, { state: {user: props.user}, replace: false})
                     }}>{props.user.fullname}</h4>
-                    <h4 className='text-md mt-[-0.3rem] text-darkTextColor h-[1rem]'>{props.user.tagName}</h4>
+                    <h4 className='text-[12px] md:text-[15px] mt-[-0.3rem] text-darkTextColor h-[1rem]'>{props.user.tagName}</h4>
                 </div>
             </div>
             { !followStatus ?
-                <button className='w-[30%] bg-iconsColor text-primary text-sm md:text-md font-semibold rounded-full px-3 py-2' onClick={() => {
+                <button className='w-[30%] bg-iconsColor text-primary text-[12px] md:text-[15px] font-semibold rounded-full px-3 py-2' onClick={() => {
                     issueFollowHandler()
                 }}>{ loading ? <Spinner/> : 'Follow'}</button>
             :
-                <button className='w-[30%] bg-iconsColor text-primary text-sm md:text-md font-semibold rounded-full px-3 py-2' onClick={() => {
+                <button className='w-[30%] bg-iconsColor text-primary text-[12px] md:text-[15px] font-semibold rounded-full px-3 py-2' onClick={() => {
                     issueUnfollowHandler()
                 }}>{ loading ? <Spinner/> : 'UnFollow'}</button>
         }

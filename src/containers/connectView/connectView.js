@@ -43,7 +43,7 @@ function ConnectView(props) {
 
     let theUsersArray = <p className='text-center text-sm text-gray-500'>No users</p>;
     if(pullState === 'loading') {
-        theUsersArray = <p className='text-center'><Spinner/></p>
+        theUsersArray = <div className='w-[100%] flex justify-center'><Spinner/></div>
     } else if(pullState === 'succeeded') {
         theUsersArray = moreUsers.map(user => {
             return <ConnectItem user={user} key={user._id} setReload={setReload}/>

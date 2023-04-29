@@ -14,20 +14,23 @@ function YouMightLike(props) {
     const userId = useSelector(state => state.authenticate.userId);
     const [pullState, setPullState] = useState('idle');
     const [usersYouMLike, setYouMightLike] = useState([]);
+    // console.log(usersYouMLike);
     const [reload, setReload] = useState(false);
 
      useEffect(() => {
-        setPullState('loading');
-        axios.get(`${process.env.REACT_APP_BACKEND_URL}/youmlike/${userId}`)
-        .then(res => {
-            setPullState('succeeded');
-            setYouMightLike(res.data.users);
-            dispatch(YOUMIGHTLIKEDATA(res.data.users));
-        })
-        .catch(err => {
-            setPullState('failed');
-            alert(err.response.data.message);
-        })
+        if(userId) {
+            setPullState('loading');
+            axios.get(`${process.env.REACT_APP_BACKEND_URL}/youmlike/${userId}`)
+            .then(res => {
+                setPullState('succeeded');
+                setYouMightLike(res.data.users);
+                dispatch(YOUMIGHTLIKEDATA(res.data.users));
+            })
+            .catch(err => {
+                setPullState('failed');
+                alert(err.response.data.message);
+            })
+        }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId, reload]);
 
@@ -43,9 +46,9 @@ function YouMightLike(props) {
     }
     return (
         <div className='my-[1rem] w-[100%] bg-darkComponent py-[1rem] rounded-2xl'>
-            <h3 className='w-[100%] text-xl font-bold px-[1rem]'>You Might Like</h3>
+            <h3 className='w-[100%] text-[15px] md:text-xl font-bold px-[1rem]'>You Might Like</h3>
             {theUsersArray}
-            <p className='px-[1rem] text-blueSpecial cursor-pointer hover:text-purple-500' onClick={() => {
+            <p className='px-[1rem] text-[15px] md:text-md text-blueSpecial cursor-pointer hover:text-purple-500' onClick={() => {
                 navigate('/main/connect');
                 dispatch(SETCONNECTUI(true));
                 }}>Show more</p>

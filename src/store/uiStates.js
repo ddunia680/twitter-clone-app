@@ -9,6 +9,7 @@ const uiStates = createSlice({
         onFeed: true,
         onUserIdentity: false,
         onMorePeople: false,
+        showLeftMenu: false,
         onUserTweet: true,
         onUserReplies: false,
         onUserMedia: false,
@@ -55,6 +56,9 @@ const uiStates = createSlice({
             state.onUserMedia = false;
             state.onUserLikes = true;
         },
+        SETSHOWLEFTSMENU: (state, action) => {
+            state.showLeftMenu = action.payload;
+        },
         SETONUSERIDENTITY: (state, action) => {
             state.onFeed = false;
             state.onUserIdentity = true;
@@ -84,6 +88,7 @@ export const {
     SETONUSERREPLIES,
     SETONUSERMEDIA,
     SETONUSERLIKES,
+    SETSHOWLEFTSMENU,
     SETONFEED,
     SETONUSERIDENTITY,
     SETONMOREPEOPLE,

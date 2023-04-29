@@ -1,0 +1,25 @@
+.mountSlide {
+    animation: mountS 0.3s ease-in-out forwards;
+}
+.unmountSlide {
+    animation: unMountS 0.3s ease-in-out forwards;
+}
+
+@keyframes mountS {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+@keyframes unMountS {
+    0% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}

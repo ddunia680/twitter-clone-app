@@ -5,7 +5,6 @@ import { CheckBadgeIcon } from '@heroicons/react/24/solid';
 import Tweet from '../tweet/tweet';
 import LeftMenu from '../../containers/leftMenu/leftMenu';
 import RightMenu from '../../containers/rightMenu/rightMenu';
-import BottomMenu from '../../containers/bottomMenu/bottomMenu';
 
 
 import mum from '../../images/mum.jpg';
@@ -63,7 +62,6 @@ function UserIdentity(props) {
 
     useEffect(() => {
         if(Object.keys(otherUser).length) {
-            console.log('we fell in oher user');
             axios.get(`${process.env.REACT_APP_BACKEND_URL}/followStatus/${otherUser._id}`)
             .then(res => {
                 setFollowing(res.data.following);
@@ -73,7 +71,6 @@ function UserIdentity(props) {
                 console.log(err.response.data.message);
             })
         } else if(isMe) {
-            console.log('we fell in me...');
             axios.get(`${process.env.REACT_APP_BACKEND_URL}/followStatus/${userId}`)
             .then(res => {
                 setFollowing(res.data.following);
@@ -313,8 +310,7 @@ function UserIdentity(props) {
                     <Tweet/>
                 </div>
             </div>
-        <RightMenu/>
-        <BottomMenu/>
+        { window.innerWidth > 500 ? <RightMenu/> : null}
     </div>
     );
 }

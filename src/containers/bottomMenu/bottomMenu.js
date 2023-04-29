@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 function BottomMenu(props) {
     const navigate = useNavigate();
     return (
-        <div className='absolute md:hidden w-[100%] h-[8vh] bottom-0 flex justify-between items-center px-[5%] bg-primary border-t-[0.01rem] border-darkClose backdrop-blur-md bg-opacity-80'>
+        <div className='fixed md:hidden w-[100%] h-[8vh] bottom-0 flex justify-between items-center px-[5%] bg-primary border-t-[0.01rem] border-darkClose backdrop-blur-md bg-opacity-80'>
             <div className='relative'>
                 <HomeIcon className='w-[1.3rem] text-iconsColor duration-75 hover:bg-gray-50 hover:duration-75' onClick={() => {
                     navigate('/main');
