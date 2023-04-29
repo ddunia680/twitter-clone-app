@@ -5,6 +5,7 @@ exports.youMLike = (req, res, next) => {
 
     User.find({_id: {$ne: userId}}, {password: 0}).limit(100)
     .then(users => {
+        console.log(users);
         let theNewArr = [];
         users.forEach(user => {
             const foundUser = user.followers.find(el => el.toString() === userId.toString());
@@ -15,8 +16,13 @@ exports.youMLike = (req, res, next) => {
         return theNewArr;
     })
     .then(theArr => {
+        // console.log(theArr);
         let arrToSend = [];
-        arrToSend.push(theArr[0], theArr[1], theArr[2]);
+        theArr[0] ? arrToSend.push(theArr[0]) : null;
+        theArr[1] ? arrToSend.push(theArr[1]) : null;
+        theArr[2] ? arrToSend.push(theArr[2]) : null;
+        // arrToSend.push(theArr[0], theArr[1], theArr[2]);
+        // console.log(theArr);
         res.status(200).json({
             message: 'data pulled successfully',
             users: arrToSend
