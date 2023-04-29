@@ -45,7 +45,6 @@ exports.moreUsers = (req, res, next) => {
         return theNewArr;
     })
     .then(theArr => {
-        // console.log(users);
         res.status(200).json({
             message: 'data pulled successfully',
             users: theArr
@@ -66,13 +65,13 @@ exports.followUser = (req, res) => {
     User.findById(userId)
     .then(me => {
         me.following.push(userToFollow);
-        me.save();
+        return me.save();
     })
     .then(response => {
         User.findById(userToFollow)
         .then(user => {
             user.followers.push(userId);
-            user.save();
+            return user.save();
         })
         .then(response => {
             res.status(200).json({
@@ -100,14 +99,18 @@ exports.unfollowUser = (req, res) => {
 
     User.findById(userId)
     .then(me => {
-        me.following.filter(fol => fol.toString() !== userToUnfollow.toString());
-        me.save();
+        const theIndex = me.following.findIndex(fol => fol.toString() === userToUnfollow.toString());
+        // me.following.filter(fol => fol.toString() !== new ObjectId(userToUnfollow));
+        me.following.splice(theIndex, 1);
+        return me.save();
     })
     .then(response => {
         User.findById(userToUnfollow)
         .then(user => {
-            user.followers.filter(fol => fol.toString() !== userId.toString());
-            user.save();
+            const theIndex = user.followers.findIndex(fol => fol.toString() === userId.toString());
+            user.followers.splice(theIndex, 1);
+            // user.followers.filter(fol => fol !== new ObjectId(userId));
+            return user.save();
         })
         .then(response => {
             res.status(200).json({
@@ -131,7 +134,6 @@ exports.unfollowUser = (req, res) => {
 
 exports.pullFollowStatus = (req, res) => {
     const userId = req.params.user;
-    console.log(userId);
 
     User.findById(userId, {followers: 1, following: 1})
     .then(user => {
@@ -141,6 +143,7 @@ exports.pullFollowStatus = (req, res) => {
         })
     })
     .catch(err => {
+        console.log(err);
         res.status(500).json({
             message: 'Something went wrong server-side'
         })
@@ -148,5 +151,18 @@ exports.pullFollowStatus = (req, res) => {
 }
 
 exports.searchUsers = (req, res) => {
+    const value = req.params.value;
+    const userId = req.params.myId;
     
+    User.find({$and: [{_id: {$ne: userId}}, {fullname: new RegExp('^' + value, "i")}]}, {password: 0})
+    .then(users => {
+        res.status(200).json({
+            users: users
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+                message: 'something went wrong server-side'
+            })
+    })
 }

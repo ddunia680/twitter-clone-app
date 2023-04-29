@@ -14,4 +14,6 @@ router.post('/unfollowUser', isAuth, usersControllers.unfollowUser);
 
 router.get('/followStatus/:user', usersControllers.pullFollowStatus);
 
+router.get('/searchUser/:value/:myId', usersControllers.searchUsers);
+
 module.exports = router;
