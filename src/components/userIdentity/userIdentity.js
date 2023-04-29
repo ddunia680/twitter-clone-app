@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SETONUSERLIKES, SETONUSERMEDIA, SETONUSERREPLIES, SETONUSERTWEETS } from '../../store/uiStates';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import Spinner from '../../UI/spinner/spinner';
 
 function UserIdentity(props) {
     const dispatch = useDispatch();
@@ -34,6 +35,7 @@ function UserIdentity(props) {
     const onUserLikes = useSelector(state => state.uiStates.onUserLikes);
 
     const userId = useSelector(state => state.authenticate.userId);
+    const token = useSelector(state => state.authenticate.token);
     const profileUrl = useSelector(state => state.authenticate.profileUrl);
     const coverUrl = useSelector(state => state.authenticate.coverUrl);
     const fullname = useSelector(state => state.authenticate.fullname);
@@ -42,6 +44,9 @@ function UserIdentity(props) {
     const createdAt = useSelector(state => state.authenticate.createdAt);
     const website = useSelector(state => state.authenticate.website);
     const location = useSelector(state => state.authenticate.location);
+
+    const [isFollowed, setIsFollowed] = useState(false);
+    const [loading, setLoading] = useState(false);
     const { id } = useParams();
 
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -59,7 +64,7 @@ function UserIdentity(props) {
     useEffect(() => {
         if(Object.keys(otherUser).length) {
             console.log('we fell in oher user');
-            axios.get(`${process.env.REACT_APP_BACKEND_URL}/followStatus/${otherUser}`)
+            axios.get(`${process.env.REACT_APP_BACKEND_URL}/followStatus/${otherUser._id}`)
             .then(res => {
                 setFollowing(res.data.following);
                 setFollowers(res.data.followers);
@@ -79,7 +84,19 @@ function UserIdentity(props) {
             })
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isMe, otherUser])
+    }, [isMe, otherUser]);
+
+    useEffect(() => {
+        if(Object.keys(otherUser).length) {
+            const theID = otherUser.followers.find(fol => fol.toString() === userId.toString());
+            if(theID) {
+                setIsFollowed(true);
+            } else {
+                setIsFollowed(false);
+            }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [otherUser]);
 
 
     const onTweets = ['w-fit h-[100%] mx-auto border-b-[5px] text-sm md:text-md py-2', onUserTweet ? 'border-blueSpecial' : 'border-transparent'];
@@ -98,6 +115,42 @@ function UserIdentity(props) {
         }
     }
 
+    const followingBHandler = () => {
+        if(!isFollowed) {
+            setLoading(true);
+            axios.post(`${process.env.REACT_APP_BACKEND_URL}/followUser`, {toFollow: otherUser._id},{
+                headers: {
+                    Authorization: 'Bearer '+ token
+                }
+            })
+            .then(res => {
+                setLoading(false);
+                setIsFollowed(true);
+                console.log('user followed successfully');
+            })
+            .catch(err => {
+                setLoading(false);
+                console.log(err);
+            })
+        } else {
+            setLoading(true);
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/unfollowUser`, {toFollow: otherUser._id}, {
+            headers: {
+                Authorization: 'Bearer '+ token
+            }
+        })
+        .then(res => {
+            setLoading(false);
+            setIsFollowed(false);
+            console.log('user unfollowed successfully');
+        })
+        .catch(err => {
+            setLoading(false);
+            console.log(err);
+        })
+        }
+    }
+
     return (
         <div className=' relative w-[100%] h-[100vh] flex justify-start items-start '>
             <LeftMenu/>
@@ -109,7 +162,7 @@ function UserIdentity(props) {
                             <div className='p-[0.7rem] bg-transparent text-iconsColor rounded-full hover:bg-darkComponent' onClick={() => navigate(-1)}>
                                 <ArrowLeftIcon className='w-[1rem] md:w-[1.2rem]' />
                             </div>
-                            <div className='flex flex-col justify-between items-start'>
+                            <div className='flex flex-col justify-between items-start ml-[1rem]'>
                                 <h3 className='text-md md:text-xl font-semibold md:font-bold flex justify-start items-center'>{isMe ? fullname : otherUser.fullname } <span><CheckBadgeIcon className='text-blueSpecial w-[1.2rem] mt-[2px] md:mt-[4px]' /></span></h3>
                                 <p className='text-xs md:text-sm text-darkTextColor'>60.1K Tweets</p>
                             </div>
@@ -121,11 +174,11 @@ function UserIdentity(props) {
                         :
                          followBInNav ? !showUnfollow ? 
                                 <div className=' sticky top-0 duration-75 rounded-full hover:bg-darkClose hover:duration-75 cursor-pointer border-[1px] border-iconsColor px-[1rem] py-[0.3rem] md:py-2 text-xs md:text-md' title='Following' onMouseEnter={() => setShowFollow(true)}>
-                                    { isMe ? 'Edit Profile' : 'Following'}
+                                    { isMe ? 'Edit Profile' : isFollowed ? 'Following' : 'Follow'}
                                 </div>
                             :
-                                <div className='duration-75 rounded-full hover:bg-redBg hover:duration-75 cursor-pointer border-[1px] border-redText px-[1rem] py-[0.3rem] md:py-2 text-xs md:text-md' title='Unfollow' onMouseLeave={() => setShowFollow(false)}>
-                                    Unfollow
+                                <div className='duration-75 rounded-full hover:bg-redBg hover:duration-75 cursor-pointer border-[1px] border-redText px-[1rem] py-[0.3rem] md:py-2 text-xs md:text-md' title={isFollowed ? 'Unfollow' : 'Follow'} onMouseLeave={() => setShowFollow(false)} onClick={() => followingBHandler()}>
+                                    { loading ? <Spinner/> : isFollowed ? 'Unfollow' : 'Follow'}
                         </div> : null}
                     </div>
                 : null}
@@ -181,11 +234,11 @@ function UserIdentity(props) {
                             </div>
                         : !showUnfollow ? 
                             <div className=' sticky top-0 duration-75 rounded-full hover:bg-darkClose hover:duration-75 cursor-pointer border-[1px] border-iconsColor px-[1rem] py-[0.3rem] md:py-2 text-xs md:text-md' title='Following' onMouseEnter={() => setShowFollow(true)}>
-                                Following
+                                {isFollowed ? 'Following' : 'Follow'}
                             </div>
                         :
-                            <div className='duration-75 rounded-full hover:bg-redBg hover:duration-75 cursor-pointer border-[1px] border-redText px-[1rem] py-[0.3rem] md:py-2 text-xs md:text-md' title='Unfollow' onMouseLeave={() => setShowFollow(false)}>
-                                Unfollow
+                            <div className='duration-75 rounded-full hover:bg-redBg hover:duration-75 cursor-pointer border-[1px] border-redText px-[1rem] py-[0.3rem] md:py-2 text-xs md:text-md' title={isFollowed ? 'Unfollow' : 'Follow'} onMouseLeave={() => setShowFollow(false)} onClick={() => followingBHandler()}>
+                                { loading ? <Spinner/> : isFollowed ? 'Unfollow' : 'Follow'}
                             </div>}
                     </div>
                 </div>

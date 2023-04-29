@@ -33,7 +33,7 @@ function YouMightLike(props) {
 
     let theUsersArray = <p className='text-center text-sm text-gray-500'>No users</p>;
     if(pullState === 'loading') {
-        theUsersArray = <p className='text-center'><Spinner/></p>
+        theUsersArray = <div className='w-[100%] flex justify-center'><Spinner/></div>
     } else if(pullState === 'succeeded') {
         theUsersArray = usersYouMLike.map(user => {
             return <ToFollow user={user} setReload={setReload} key={user._id}/>
@@ -45,7 +45,7 @@ function YouMightLike(props) {
         <div className='my-[1rem] w-[100%] bg-darkComponent py-[1rem] rounded-2xl'>
             <h3 className='w-[100%] text-xl font-bold px-[1rem]'>You Might Like</h3>
             {theUsersArray}
-            <p className='px-[1rem] text-blueSpecial cursor-pointer' onClick={() => {
+            <p className='px-[1rem] text-blueSpecial cursor-pointer hover:text-purple-500' onClick={() => {
                 navigate('/main/connect');
                 dispatch(SETCONNECTUI(true));
                 }}>Show more</p>

@@ -17,7 +17,10 @@ function SearchBar(props) {
                 <MagnifyingGlassIcon className="w-[1.2rem] text-iconsColor"/>
                 
 
-                <input type='text' placeholder={props.placeHolder} className='text-md w-[70%] bg-transparent outline-none focus:text-iconsColor' value={inputvalue} onChange={event => setInputValue(event.target.value)}/>
+                <input type='text' placeholder={props.placeHolder} className='text-md w-[70%] bg-transparent outline-none focus:text-iconsColor' value={inputvalue} onChange={event => {
+                    setInputValue(event.target.value);
+                    props.searchV(event.target.value);
+                }} />
                 { inputvalue ? 
                     <XCircleIcon className='w-[2rem] text-blueSpecial'/>
                 : <div className='w-[2rem]'></div> }

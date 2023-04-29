@@ -25,7 +25,7 @@ function ConnectItem(props) {
         })
     }
     return (
-        <div className='w-[100%] hover:bg-closestToPrimary flex justify-start items-start space-x-2 py-2'>
+        <div className='w-[100%] hover:bg-closestToPrimary flex justify-start items-start space-x-2 py-2 px-2'>
             <div className='relative w-[3rem] h-[3rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer border-[2px] border-black mt-2'>
                 <img src={props.user.profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
             </div>
