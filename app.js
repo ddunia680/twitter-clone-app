@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
+const tweetsRoutes = require('./routes/tweet');
 
 const app = express();
 const fileFilter = (req, file, cb) => {
@@ -35,6 +36,7 @@ app.use(multer({fileFilter: fileFilter }).array('photos', 12));
 
 app.use('/auth', authRoutes);
 app.use(usersRoutes);
+app.use(tweetsRoutes);
 // app.use('/', (req, res) => {
 //     res.send('welcome to the app');
 // })

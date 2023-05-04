@@ -5,7 +5,7 @@ exports.youMLike = (req, res, next) => {
 
     User.find({_id: {$ne: userId}}, {password: 0}).limit(100)
     .then(users => {
-        console.log(users);
+        // console.log(users);
         let theNewArr = [];
         users.forEach(user => {
             const foundUser = user.followers.find(el => el.toString() === userId.toString());
@@ -170,5 +170,29 @@ exports.searchUsers = (req, res) => {
         res.status(500).json({
                 message: 'something went wrong server-side'
             })
+    })
+}
+
+exports.pullFollowCenter = (req, res) => {
+    const theId = req.params.id;
+
+    // Comming back on this soon!!
+
+    User.findById(theId, {following: 1, followers: 1})
+    .then(res => {
+        let newFollowing = [];
+
+        res.following.map(el => {
+            User.findById(el).then(user => {
+                newFollowing.push(user);
+            })
+        })
+        return newFollowing;
+    })
+    .then(newFol => {
+        console.log(newFol);
+    })
+    .catch(err => {
+        console.log(err);
     })
 }

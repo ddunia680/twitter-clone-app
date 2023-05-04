@@ -16,4 +16,6 @@ router.get('/followStatus/:user', usersControllers.pullFollowStatus);
 
 router.get('/searchUser/:value/:myId', usersControllers.searchUsers);
 
+router.get('/followCenter/:id', usersControllers.pullFollowCenter);
+
 module.exports = router;

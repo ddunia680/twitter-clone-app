@@ -11,31 +11,32 @@ const tweetSchema = Schema({
     text: {
         type: String
     },
-    medio: {
+    media: {
+        type: Array
+    },
+    gif: {
+        type: String
+    },
+    location: {
         type: String
     },
     likes: [
         {
-            type: Schema.Types.ObjectId,
-            ref: 'User'
+            type: Object
         }
-    ]
-    ,
+    ],
     retweets: [
         {
-            type: Schema.Types.ObjectId,
-            ref: 'User'
+            type: Object
         }
     ],
-    views: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'User'
-        }
-    ],
+    views: {
+        type: Number,
+        default: 0
+    },
     comment: [
         {
-            type: Object,
+            type: Schema.Types.ObjectId,
             ref: 'Comment'
         }
     ]
