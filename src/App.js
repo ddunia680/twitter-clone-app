@@ -10,6 +10,7 @@ import { KEEPAUTHENTICATED, LOGOUT } from './store/authenticate';
 import ConnectView from './containers/connectView/connectView';
 import RightMenu from './containers/rightMenu/rightMenu';
 import BottomMenu from './containers/bottomMenu/bottomMenu';
+import UserFollowCenter from './containers/userFollowCenter/userFollowCenter';
 
 function App() {
   const dispatch = useDispatch();
@@ -59,6 +60,7 @@ function App() {
           <Route path='editProfile' element={<EditProfile/>}/>
           <Route path='connect' element={<ConnectView/>} />
           <Route path=':id' element={<UserIdentity/>}/>
+          <Route path=':id/followCenter' element={<UserFollowCenter/>}/>
         </Route>
         { window.innerWidth <= 500 ? <Route path='search' element={<RightMenu/>} /> : null}
       </Routes>

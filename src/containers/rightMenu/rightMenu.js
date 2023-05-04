@@ -3,15 +3,17 @@ import './rightMenu.css';
 import SearchBar from '../../components/searchBar/searchBar';
 import Trends from '../trends/trends';
 import YouMightLike from '../youMightLike/youMightLike';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 import ToFollow from '../../components/toFollow/toFollow';
 import axios from 'axios';
 import Spinner from '../../UI/spinner/spinner';
 import { Transition } from 'react-transition-group';
 import SmallSMenu from '../../components/smallScreenMenu/smallSMenu';
+import { SETSHOWLEFTSMENU } from '../../store/uiStates';
 
 function RightMenu(props) {
+    const dispatch = useDispatch();
     const connectIU = useSelector(state => state.uiStates.connectIU);
     const userId = useSelector(state => state.authenticate.userId);
     const [enteredValue, setEnteredValue] = useState('');
@@ -45,7 +47,7 @@ function RightMenu(props) {
     }
         
     return (
-        <div className='flex justify-start items-start'>
+        <div className='rightMenu flex justify-start items-start w-[100vw] md:w-[30%] h-[100%] overflow-y-scroll'>
             { window.innerWidth <= 500 ? 
                     <Transition
                         in={isVisible}
@@ -58,11 +60,11 @@ function RightMenu(props) {
                      
                 : null}
             { isVisible ? 
-                <div className='h-[100vh> bg-gray-950 text-gray-950'>
+                <div className='h-[100vh] bg-gray-950 text-gray-950' onClick={() => dispatch(SETSHOWLEFTSMENU(false))}>
                     well
                 </div>
             :
-            <div className='rightMenu flex w-[100vw] md:w-[30%] h-[100%] flex-col justify-start items-start px-[2rem] border-l-[1px] border-darkClose overflow-y-scroll pb-[1rem]'>
+            <div className='flex w-[100%] flex-col justify-start items-start px-[2rem] border-l-[1px] border-darkClose pb-[1rem]'>
                 <SearchBar filter={false} placeHolder="Search Twitter" searchV={searchUsers} filterValue={searchHandler}/>
                 {  !enteredValue ?
                     <>

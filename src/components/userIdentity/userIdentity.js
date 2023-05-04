@@ -148,6 +148,31 @@ function UserIdentity(props) {
         }
     }
 
+    const goToFollowCenter = (follState) => {
+        console.log('we are following');
+        if(isMe) {
+            navigate(`followCenter`, { 
+                state: {
+                    user: {
+                        _id: userId,
+                        fullname: fullname,
+                        tagName: tagName
+                    }, 
+                    onFollowing: follState
+                }, 
+                replace: false
+            })
+        } else {
+            navigate(`followCenter`, { 
+                state: {
+                    user: {...otherUser}, 
+                    onFollowing: follState
+                }, 
+                replace: false
+            })
+        }
+    }
+
     return (
         <div className=' relative w-[100%] h-[100vh] flex justify-start items-start '>
             <LeftMenu/>
@@ -226,7 +251,7 @@ function UserIdentity(props) {
                         </div> :null}
                         {/* follow button */}
                         { isMe ? 
-                            <div className=' sticky top-0 duration-75 rounded-full hover:bg-darkClose hover:duration-75 cursor-pointer border-[1px] border-iconsColor px-[1rem] py-[0.3rem] md:py-2 text-xs md:text-md' title='Following' onClick={() => navigate('/main/editProfile')}>
+                            <div className=' sticky top-0 duration-75 rounded-full hover:bg-darkClose hover:duration-75 cursor-pointer border-[1px] border-iconsColor px-[1rem] py-[0.3rem] md:py-2 text-xs md:text-md' title='Edit Profile' onClick={() => navigate('/main/editProfile')}>
                                 Edit Profile
                             </div>
                         : !showUnfollow ? 
@@ -267,11 +292,13 @@ function UserIdentity(props) {
                 </div>
                 {/* Following and followers */}
                 <div className='mt-1 w-[70%] md:w-[35%] flex justify-between items-center px-[1rem]'>
-                    <h4 className='text-darkTextColor text-sm'><span className='font-bold text-iconsColor'>{following.length}</span>Following</h4>
-                    <h4 className='text-darkTextColor text-sm'><span className='font-bold text-iconsColor'>{followers.length}</span>Followers</h4>
+
+                    <h4 className='text-darkTextColor text-sm cursor-pointer hover:underline' onClick={() => {goToFollowCenter(true)}}><span className='font-bold text-iconsColor'>{following.length}</span>Following</h4>
+
+                    <h4 className='text-darkTextColor text-sm cursor-pointer hover:underline' onClick={() => {goToFollowCenter(false)}}><span className='font-bold text-iconsColor'>{followers.length}</span>Followers</h4>
                 </div>
 
-                <div className='flex justify-start items-center w-[100%] mt-2 px-[1rem]'>
+                <div className='flex justify-start items-center w-[100%] mt-2 px-[1rem] cursor-pointer'>
                     <div className='flex justify-start items-center'>
                         <div className='relative w-[1.5rem] h-[1.5rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer border-[2px] border-black'>
                             <img src={dad} alt='' className='w-[100%] h-[100%] object-contain'/>

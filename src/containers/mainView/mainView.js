@@ -4,10 +4,12 @@ import RightMenu from '../rightMenu/rightMenu';
 import Feed from '../feed/feed';
 import SmallSMenu from '../../components/smallScreenMenu/smallSMenu';
 import { Transition } from 'react-transition-group';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { SETSHOWLEFTSMENU } from '../../store/uiStates';
 
 
 function MainView(props) {
+    const dispatch = useDispatch();
     const isVisible = useSelector(state => state.uiStates.showLeftMenu);
     return (
         <div className=' relative w-[100%] h-[100vh] flex justify-start items-start'>
@@ -24,7 +26,7 @@ function MainView(props) {
                      
                 : null}
                 { isVisible ? 
-                    <div className='h-[100vh> bg-gray-950 text-gray-950'>
+                    <div className='h-[100vh> bg-gray-950 text-gray-950' onClick={() => dispatch(SETSHOWLEFTSMENU(false))}>
                         well
                     </div>
                 : <Feed/> }
