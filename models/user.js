@@ -37,13 +37,10 @@ const userSchema = Schema({
         type: String,
     },
     following: [
-        {type: Schema.Types.ObjectId,
-        ref: 'User'}
-    ]
-    ,
+        {type: Object}
+    ],
     followers: [
-        {type: Schema.Types.ObjectId,
-        ref: 'User'}
+        {type: Object}
     ]
 }, { timestamps: true });
 

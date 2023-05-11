@@ -6,6 +6,18 @@ const router = express.Router();
 
 router.post('/tweet', isAuth, tweetControllers.postTweet);
 
-router.get('/pullMyTweet', isAuth, tweetControllers.pullMyTweets);
+router.get('/pullTweet', isAuth, tweetControllers.pullTweets);
+
+router.get('/pullMyTweets/:id', isAuth, tweetControllers.pullMyTweets);
+
+router.get('/tweetsCount/:id', isAuth, tweetControllers.tweetsCount);
+
+router.post('/issueView/:id/:tweetId', tweetControllers.issueView);
+
+router.post('/issueLike/:id/:tweetId', tweetControllers.issueLike);
+
+router.post('/issueUnlike/:id/:tweetId', tweetControllers.issueUnlike);
+
+router.post('/issueRetweet/:id/:tweetId', tweetControllers.issueRetweet);
 
 module.exports = router;

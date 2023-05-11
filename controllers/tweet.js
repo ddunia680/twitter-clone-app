@@ -20,10 +20,51 @@ const uploadAnImage = (imgFile, cb) => {
     })
 }
 
-exports.pullMyTweets = (req, res) => {
+exports.pullTweets = (req, res) => {
     const userId = req.userId;
 
     Tweet.find({by: userId}).populate('by', {password: 0})
+    .then(tweets => {
+        User.findById(userId, {following: 1})
+        .then(user => {
+            let thePromises = [];
+            user.following.forEach(fol => {
+                thePromises.push(Tweet.find({by: fol._id}).populate('by', {password: 0}));
+            })
+
+            Promise.all(thePromises)
+            .then(values => {
+                const ArrayToSend = [];
+                ArrayToSend.push(...tweets);
+                values.forEach(item => {
+                    if(Array.isArray(item)) {
+                        item.forEach(itm => {
+                            ArrayToSend.push(itm);
+                        })
+                    } else {
+                        ArrayToSend.push(item);
+                    }
+                })
+                // console.log(ArrayToSend);
+                res.status(200).json({
+                    tweets: ArrayToSend
+                })
+            })
+        })
+        // console.log(tweets);
+        
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'something went wrong server-side'
+        })
+    })
+}
+
+exports.pullMyTweets = (req, res) => {
+    const theId = req.params.id;
+
+    Tweet.find({by: theId}).populate('by', {password: 0})
     .then(tweets => {
         // console.log(tweets);
         res.status(200).json({
@@ -204,4 +245,107 @@ exports.postTweet = async (req, res) => {
                 })
             })
     }
+ }
+
+ exports.tweetsCount = (req, res) => {
+    const theId = req.params.id;
+
+    Tweet.find({by: theId}).count()
+    .then(response => {
+        res.status(200).json({
+            count: response
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'Something went wrong server-side'
+        })
+    })
+ }
+
+ exports.issueView = (req, res) => {
+    const viewedBy = req.params.id;
+    const tweetId = req.params.tweetId;
+
+    Tweet.findById(tweetId).populate('by', {password: 0})
+    .then(tweet => {
+        if(tweet.by._id.toString() !== viewedBy.toString()) {
+            tweet.views += 1; 
+        }
+        return tweet.save();
+    })
+    .then(result => {
+        res.status(201).json({
+            views: result.views
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'something went wrong server-side'
+        })
+    })
+ }
+
+ exports.issueLike = (req, res) => {
+    const likedBy = req.params.id;
+    const tweetId = req.params.tweetId;
+
+    Tweet.findById(tweetId)
+    .then(tweet => {
+        tweet.likes.push(likedBy);
+        return tweet.save();
+    })
+    .then(update => {
+        res.status(201).json({
+            likes: update.likes
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'something went wrong server-side'
+        })
+    })
+ }
+
+ exports.issueUnlike = (req, res) => {
+    const unLikedBy = req.params.id;
+    const tweetId = req.params.tweetId;
+
+    Tweet.findById(tweetId)
+    .then(tweet => {
+        const theIndex = tweet.likes.findIndex(like => like === unLikedBy);
+        tweet.likes.splice(theIndex, 1);
+        return tweet.save();
+    })
+    .then(update => {
+        res.status(201).json({
+            likes: update.likes
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'something went wrong server-side'
+        })
+    })
+ }
+
+ exports.issueRetweet = (req, res) => {
+    const retweetedBy = req.params.id;
+    const tweetId = req.params.tweetId;
+
+    Tweet.findById(tweetId)
+    .then(tweet => {
+        tweet.retweets.push(retweetedBy);
+        return tweet.save();
+    })
+    .then(update => {
+        res.status(201).json({
+            retweets: update.retweets
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'something went wrong server-side'
+        })
+    })
  }

@@ -8,7 +8,7 @@ exports.youMLike = (req, res, next) => {
         // console.log(users);
         let theNewArr = [];
         users.forEach(user => {
-            const foundUser = user.followers.find(el => el.toString() === userId.toString());
+            const foundUser = user.followers.find(el => el._id.toString() === userId.toString());
             if(!foundUser) {
                 theNewArr.push(user);
             }
@@ -43,7 +43,7 @@ exports.moreUsers = (req, res, next) => {
     .then(users => {
         let theNewArr = [];
         users.forEach(user => {
-            const foundUser = user.followers.find(el => el.toString() === userId.toString());
+            const foundUser = user.followers.find(el => el._id.toString() === userId.toString());
             if(!foundUser) {
                 theNewArr.push(user);
             }
@@ -71,27 +71,36 @@ exports.followUser = (req, res) => {
     User.findById(userId)
     .then(me => {
         me.following.push(userToFollow);
-        return me.save();
-    })
-    .then(response => {
-        User.findById(userToFollow)
-        .then(user => {
-            user.followers.push(userId);
-            return user.save();
-        })
+        me.save()
         .then(response => {
-            res.status(200).json({
-                message: 'followed user successfully'
+            User.findById(userToFollow._id)
+            .then(user => {
+                user.followers.push({_id: me._id, profileUrl: me.profileUrl, fullname: me.fullname, tagName: me.tagName});
+                user.save()
+                .then(response => {
+                    res.status(200).json({
+                        message: 'followed user successfully'
+                    })
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        message: 'Something went wrong server-side'
+                    })
+                })
+            }).catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    message: 'Something went wrong server-side'
+                })
             })
-        })
-        .catch(err => {
+        }).catch(err => {
             console.log(err);
             res.status(500).json({
                 message: 'Something went wrong server-side'
             })
         })
-    })
-    .catch(err => {
+    }).catch(err => {
         console.log(err);
         res.status(500).json({
             message: 'Something went wrong server-side'
@@ -102,10 +111,11 @@ exports.followUser = (req, res) => {
 exports.unfollowUser = (req, res) => {
     const userId = req.userId;
     const userToUnfollow = req.body.toFollow;
+    // console.log(userToUnfollow);
 
     User.findById(userId)
     .then(me => {
-        const theIndex = me.following.findIndex(fol => fol.toString() === userToUnfollow.toString());
+        const theIndex = me.following.findIndex(fol => fol._id.toString() === userToUnfollow.toString());
         // me.following.filter(fol => fol.toString() !== new ObjectId(userToUnfollow));
         me.following.splice(theIndex, 1);
         return me.save();
@@ -113,7 +123,7 @@ exports.unfollowUser = (req, res) => {
     .then(response => {
         User.findById(userToUnfollow)
         .then(user => {
-            const theIndex = user.followers.findIndex(fol => fol.toString() === userId.toString());
+            const theIndex = user.followers.findIndex(fol => fol._id.toString() === userId.toString());
             user.followers.splice(theIndex, 1);
             // user.followers.filter(fol => fol !== new ObjectId(userId));
             return user.save();
@@ -176,23 +186,17 @@ exports.searchUsers = (req, res) => {
 exports.pullFollowCenter = (req, res) => {
     const theId = req.params.id;
 
-    // Comming back on this soon!!
-
     User.findById(theId, {following: 1, followers: 1})
-    .then(res => {
-        let newFollowing = [];
-
-        res.following.map(el => {
-            User.findById(el).then(user => {
-                newFollowing.push(user);
-            })
+    .then(users => {
+        res.status(200).json({
+            followers: users.followers,
+            following: users.following
         })
-        return newFollowing;
-    })
-    .then(newFol => {
-        console.log(newFol);
     })
     .catch(err => {
-        console.log(err);
+        res.status(500).json({
+            message: 'Something went wrong server-side'
+        })
     })
+        
 }
