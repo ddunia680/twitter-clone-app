@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import { ChatBubbleBottomCenterIcon, ArrowDownTrayIcon, ArrowPathRoundedSquareIcon, HeartIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 import mum from '../../images/mum.jpg';
@@ -6,26 +6,99 @@ import dad from '../../images/dad.jpg';
 import cecile from '../../images/cecile3.JPG';
 import './tweet.css';
 import { useSelector } from 'react-redux';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function Tweet(props) {
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const userId = useSelector(state => state.authenticate.userId);
+    // const token = useSelector(state => state.authenticate.token);
     const [showPopUp, setShowPopUp] = useState(false);
+    const [isIntersecting, setIsIntersecting] = useState(false);
+    const [ilikedIt, setILikedIt] = useState(false);
+    const [views, setViews] = useState(props.tweet.views);
+    const [likes, setLikes] = useState(props.tweet.likes);
+    const [retweets, setRetweets] = useState(props.tweet.retweets);
+    const theTweetRef = useRef();
 
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+    const ilikedClasses = ['w-[1.2rem]', ilikedIt ? 'text-blueSpecial' : 'text-gray-500']
+
+    useEffect(() => {
+        const myLike = likes.find(like => like.toString() === userId);
+        if(myLike) {
+            setILikedIt(true);
+        } else {
+            setILikedIt(false);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [likes]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const entry = entries[0]
+                setIsIntersecting(entry.isIntersecting);
+                // console.log(entry);
+            });
+            observer.observe(theTweetRef.current)
+    }, []);
+
+    useEffect(() => {
+        if(isIntersecting) {
+            axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueView/${userId}/${props.tweet._id}`)
+            .then(res => {
+                setViews(res.data.views);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isIntersecting]);
+
+    const issueLikeHandler = () => {
+        if(ilikedIt) {
+            axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueUnlike/${userId}/${props.tweet._id}`)
+                .then(res => {
+                    setLikes(res.data.likes);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        } else {
+            axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueLike/${userId}/${props.tweet._id}`)
+                .then(res => {
+                    setLikes(res.data.likes);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        }
+    }
+
+    const issueRetweet = () => {
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueRetweet/${userId}/${props.tweet._id}`)
+                .then(res => {
+                    setRetweets(res.data.retweets);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+    }
+
     return (
-        <div className='relative w-[100%] flex justify-start items-start pt-2 border-b-[1px] border-darkClose'>
+        <div className='relative w-[100%] flex justify-start items-start pt-2 border-b-[1px] border-darkClose' ref={theTweetRef}>
             {/* <UserCircleIcon className='w-[3rem] md:w-[5rem] px-2 cursor-pointer'/> */}
-            <div className='w-[2.5rem] md:w-[3.2rem] h-[2.5rem] md:h-[3.2rem] rounded-full overflow-hidden bg-gray-700 mx-2 cursor-pointer' onMouseEnter={() => { setTimeout(() => { setShowPopUp(true)}, 1000)}} onMouseLeave={() => { setTimeout(() => {setShowPopUp(false)}, 1000) }}>
+            <div className='w-[2.5rem] md:w-[3.2rem] h-[2.5rem] md:h-[3.2rem] rounded-full overflow-hidden bg-gray-700 mx-2 cursor-pointer' onMouseEnter={() => { setTimeout(() => { setShowPopUp(true)}, 1000)}} onMouseLeave={() => { setTimeout(() => {setShowPopUp(false)}, 1000) }} onClick={() => navigate(`/main/${props.tweet.by._id}`)}>
                 <img src={props.tweet.by.profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
             </div>
             <div className='relative w-[80%] flex flex-col justify-start items-start pt-1'>
                 {/* User identity */}
                 <div className='text-[13px] md:text-[15px] w-[90%] flex justify-start items-start cursor-pointer'>
                     <p className='w-3/4 md:w-[50%] xl:w-[90%] whitespace-nowrap overflow-x-hidden overflow-ellipsis'>
-                        <span className='text-iconsColor font-bold duration-75 hover:underline hover:duration-75' onMouseEnter={() => { setTimeout(() => { setShowPopUp(true)}, 1000)}} onMouseLeave={() => { setTimeout(() => {setShowPopUp(false)}, 1000) }}>
+                        <span className='text-iconsColor font-bold duration-75 hover:underline hover:duration-75' onMouseEnter={() => { setTimeout(() => { setShowPopUp(true)}, 1000)}} onMouseLeave={() => { setTimeout(() => {setShowPopUp(false)}, 1000) }} onClick={() => navigate(`/main/${props.tweet.by._id}`)}>
                             {props.tweet.by.fullname}
                         </span> 
                         <span className='text-darkTextColor'>{props.tweet.by.tagName}</span>
@@ -36,7 +109,7 @@ function Tweet(props) {
                     { showPopUp ? 
                         <div className='popUp absolute top-[2rem] left-0 w-[17rem] bg-primary rounded-xl z-7 py-2 px-4' onMouseEnter={() => setShowPopUp(true)} onMouseLeave={() => setTimeout(() => {setShowPopUp(false)}, 1000)}>
                             <div className='w-[100%] flex justify-between items-center'>
-                                <div className='w-[2.5rem] md:w-[3.2rem] h-[2.5rem] md:h-[3.2rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer'>
+                                <div className='w-[2.5rem] md:w-[3.2rem] h-[2.5rem] md:h-[3.2rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer' onClick={() => navigate(`/main/${props.tweet.by._id}`)}>
                                     <img src={props.tweet.by.profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
                                 </div>
                                 {props.tweet.by._id !== userId ? 
@@ -44,9 +117,7 @@ function Tweet(props) {
                                 : <p>You</p>}
                                 
                             </div>
-                            <p className='text-md font-bold text-iconsColor hover:underline'>
-                                {props.tweet.by.fullname}
-                            </p>
+                            <p className='text-md font-bold text-iconsColor hover:underline' onClick={() => navigate(`/main/${props.tweet.by._id}`)}>{props.tweet.by.fullname}</p>
                             <p className='text-sm text-darkTextColor'>{props.tweet.by.tagName}</p>
                             <p className='mt-2 text-iconsColor'>{props.tweet.by.bio}</p>
                             <div className='mt-1 w-[80%] flex justify-between items-center'>
@@ -155,17 +226,17 @@ function Tweet(props) {
                     {/* retweets */}
                     <div className='flex justify-start items-center'>
                         <div className='p-[0.4rem] rounded-full duration-75 hover:bg-blueLight hover:text-blueSpecial hover:duration-75 cursor-pointer' title='retweets'>
-                            <ArrowPathRoundedSquareIcon className='w-[1.2rem]'/>
+                            <ArrowPathRoundedSquareIcon className='w-[1.2rem]' onClick={() => issueRetweet()}/>
                         </div>
-                        <p>{props.tweet.retweets.length}</p>
+                        <p>{retweets.length}</p>
                     </div>
 
                     {/* likes */}
                     <div className='flex justify-start items-center'>
                         <div className='p-[0.4rem] rounded-full duration-75 hover:bg-blueLight hover:text-blueSpecial hover:duration-75 cursor-pointer' title='likes'>
-                            <HeartIcon className='w-[1.2rem]'/>
+                            <HeartIcon className={ilikedClasses.join(' ')} onClick={() => issueLikeHandler()}/>
                         </div>
-                        <p>{props.tweet.likes.length}</p>
+                        <p>{likes.length}</p>
                     </div>
 
                     {/* views */}
@@ -173,7 +244,7 @@ function Tweet(props) {
                         <div className='p-[0.4rem] rounded-full duration-75 hover:bg-blueLight hover:text-blueSpecial hover:duration-75 cursor-pointer' title='views'>
                             <ChartBarIcon className='w-[1.2rem]'/>
                         </div>
-                        <p>{props.tweet.views}</p>
+                        <p>{views}</p>
                     </div>
                     {/* share */}
                     <div className='p-[0.4rem] rounded-full duration-75 hover:bg-blueLight hover:text-blueSpecial hover:duration-75 cursor-pointer' title='share'>

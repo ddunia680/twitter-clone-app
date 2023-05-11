@@ -15,6 +15,7 @@ import { SETONUSERLIKES, SETONUSERMEDIA, SETONUSERREPLIES, SETONUSERTWEETS } fro
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Spinner from '../../UI/spinner/spinner';
+import { pullMyTweets } from '../../store/tweets';
 
 function UserIdentity(props) {
     const dispatch = useDispatch();
@@ -46,16 +47,22 @@ function UserIdentity(props) {
 
     const [isFollowed, setIsFollowed] = useState(false);
     const [loading, setLoading] = useState(false);
+    const myTweetLoadingState = useSelector(state => state.tweets.myTweetLoadingState);
+    const myTweets = useSelector(state => state.tweets.myTweets);
     const { id } = useParams();
+    const [theIDForPull, setTheIdForPull] = useState(null);
+    const [tweetsCount, setTweetCount] = useState(0);
 
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     
     useEffect(() => {
         if(userId === id) {
             setIsMe(true);
+            setTheIdForPull(userId);
         } else {
             setIsMe(false);
             setOtherUser(locationState.state.user);
+            setTheIdForPull(locationState.state.user._id);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -85,7 +92,7 @@ function UserIdentity(props) {
 
     useEffect(() => {
         if(Object.keys(otherUser).length) {
-            const theID = otherUser.followers.find(fol => fol.toString() === userId.toString());
+            const theID = otherUser.followers.find(fol => fol._id.toString() === userId.toString());
             if(theID) {
                 setIsFollowed(true);
             } else {
@@ -94,6 +101,62 @@ function UserIdentity(props) {
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [otherUser]);
+
+    useEffect(() => {
+        if(theIDForPull) {
+            if(token) {
+                const info = {
+                    method: 'GET',
+                    url: `${process.env.REACT_APP_BACKEND_URL}/pullMyTweets/${theIDForPull}`,
+                    token: token
+                }
+                dispatch(pullMyTweets(info));
+            }
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token, theIDForPull]);
+
+    useEffect(() => {
+        if(Object.keys(otherUser).length) {
+            axios.get(`${process.env.REACT_APP_BACKEND_URL}/tweetsCount/${otherUser._id}`, {
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            })
+            .then(res => {
+                setTweetCount(res.data.count);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        } else {
+            axios.get(`${process.env.REACT_APP_BACKEND_URL}/tweetsCount/${userId}`, {
+                headers: {
+                    Authorization: 'Bearer ' + token
+                }
+            })
+            .then(res => {
+                setTweetCount(res.data.count);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [otherUser, userId]);
+
+    let theTweets = <p className='mx-auto text-gray-600 text-sm'>No Tweets loaded...</p>
+    if(myTweetLoadingState === 'loading') {
+        theTweets = <div className='w-[100%] flex justify-center'><Spinner/></div>
+    } else if(myTweetLoadingState === 'succeeded' && myTweets.length) {
+            theTweets = myTweets.map(tweet => {
+                return <Tweet tweet={tweet} by={tweet.by._id} key={tweet._id}/>
+            })
+    } else if(myTweetLoadingState === 'failed') {
+        theTweets = <p className='mx-auto text-gray-600 text-sm'>something went wrong server-side...</p>
+    } else {
+        theTweets = <p className='mx-auto text-gray-600 text-sm'>nothing was loaded...</p>
+    }
 
 
     const onTweets = ['w-fit h-[100%] mx-auto border-b-[5px] text-sm md:text-md py-2', onUserTweet ? 'border-blueSpecial' : 'border-transparent'];
@@ -113,9 +176,15 @@ function UserIdentity(props) {
     }
 
     const followingBHandler = () => {
+        const userData = {
+            _id: otherUser._id,
+            fullname: otherUser.fullname,
+            tagName: otherUser.tagName,
+            profileUrl: otherUser.profileUrl
+        }
         if(!isFollowed) {
             setLoading(true);
-            axios.post(`${process.env.REACT_APP_BACKEND_URL}/followUser`, {toFollow: otherUser._id},{
+            axios.post(`${process.env.REACT_APP_BACKEND_URL}/followUser`, {toFollow: userData},{
                 headers: {
                     Authorization: 'Bearer '+ token
                 }
@@ -186,7 +255,7 @@ function UserIdentity(props) {
                             </div>
                             <div className='flex flex-col justify-between items-start ml-[1rem]'>
                                 <h3 className='text-md md:text-xl font-semibold md:font-bold flex justify-start items-center'>{isMe ? fullname : otherUser.fullname } <span><CheckBadgeIcon className='text-blueSpecial w-[1.2rem] mt-[2px] md:mt-[4px]' /></span></h3>
-                                <p className='text-xs md:text-sm text-darkTextColor'>60.1K Tweets</p>
+                                <p className='text-xs md:text-sm text-darkTextColor'>{tweetsCount} Tweets</p>
                             </div>
                         </div>
                         {followBInNav && isMe ? 
@@ -332,9 +401,7 @@ function UserIdentity(props) {
                     </div>
                 </div>
                 <div className='w-[100%] flex flex-col justify-start items-start'>
-                    <Tweet/>
-                    <Tweet/>
-                    <Tweet/>
+                    {theTweets}
                 </div>
             </div>
         { window.innerWidth > 500 ? <RightMenu/> : null}

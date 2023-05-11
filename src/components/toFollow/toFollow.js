@@ -13,7 +13,7 @@ function ToFollow(props) {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const me = props.user.followers.find(id => id.toString() === userId.toString());
+        const me = props.user.followers.find(fol => fol._id.toString() === userId.toString());
         if(me) {
             setFollowStatus(true);
         }
@@ -21,8 +21,14 @@ function ToFollow(props) {
     }, []);
 
     const issueFollowHandler = () => {
+        const userData = {
+            _id: props.user._id,
+            fullname: props.user.fullname,
+            tagName: props.user.tagName,
+            profileUrl: props.user.profileUrl
+        }
         setLoading(true);
-        axios.post(`${process.env.REACT_APP_BACKEND_URL}/followUser`, {toFollow: props.user._id},{
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/followUser`, {toFollow: userData},{
             headers: {
                 Authorization: 'Bearer '+ token
             }
@@ -69,11 +75,11 @@ function ToFollow(props) {
                 </div>
             </div>
             { !followStatus ?
-                <button className='w-[30%] bg-iconsColor text-primary text-[12px] md:text-[15px] font-semibold rounded-full px-3 py-2' onClick={() => {
+                <button className='w-[30%] bg-iconsColor text-primary text-[12px] md:text-[15px] font-semibold rounded-full px-3 py-2' title='Follow' onClick={() => {
                     issueFollowHandler()
                 }}>{ loading ? <Spinner/> : 'Follow'}</button>
             :
-                <button className='w-[30%] bg-iconsColor text-primary text-[12px] md:text-[15px] font-semibold rounded-full px-3 py-2' onClick={() => {
+                <button className='w-[30%] bg-iconsColor text-primary text-[12px] md:text-[15px] font-semibold rounded-full px-3 py-2' title='Unfollow' onClick={() => {
                     issueUnfollowHandler()
                 }}>{ loading ? <Spinner/> : 'UnFollow'}</button>
         }

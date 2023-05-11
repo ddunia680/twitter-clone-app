@@ -11,7 +11,13 @@ function ConnectItem(props) {
     const navigate = useNavigate();
 
     const issueFollowHandler = () => {
-        axios.post(`${process.env.REACT_APP_BACKEND_URL}/followUser`, {toFollow: props.user._id},{
+        const userData = {
+            _id: props.user._id,
+            fullname: props.user.fullname,
+            tagName: props.user.tagName,
+            profileUrl: props.user.profileUrl
+        }
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/followUser`, {toFollow: userData},{
             headers: {
                 Authorization: 'Bearer '+ token
             }

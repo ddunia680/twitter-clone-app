@@ -5,25 +5,23 @@ import FeedHead from '../../components/feedHead/feedHead';
 import TwitterInput from '../../components/twitterInput/twitterInput';
 import Tweet from '../../components/tweet/tweet';
 import { useDispatch, useSelector } from 'react-redux';
-import { pullMyTweets } from '../../store/tweets';
+import { pullTweets } from '../../store/tweets';
 import Spinner from '../../UI/spinner/spinner';
 
 function Feed(props) {
     const dispatch = useDispatch();
     const token = useSelector(state => state.authenticate.token);
     const loadingState = useSelector(state => state.tweets.loadingState);
-    const myTweets = useSelector(state => state.tweets.myTweets);
-    console.log(myTweets);
-    // console.log(loadingState);
+    const myTweets = useSelector(state => state.tweets.tweets);
 
     useEffect(() => {
         if(token) {
             const info = {
                 method: 'GET',
-                url: `${process.env.REACT_APP_BACKEND_URL}/pullMyTweet`,
+                url: `${process.env.REACT_APP_BACKEND_URL}/pullTweet`,
                 token: token
             }
-            dispatch(pullMyTweets(info));
+            dispatch(pullTweets(info));
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);

@@ -4,7 +4,7 @@ import { CheckBadgeIcon } from '@heroicons/react/24/solid';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Spinner from '../../UI/spinner/spinner';
-import ConnectItem from '../connectItem/connectItem';
+import FollowPulled from '../followPulled/followPulled';
 
 function FollowCenter(props) {
     const navigate = useNavigate();
@@ -51,13 +51,13 @@ function FollowCenter(props) {
     } else if(!loading && onFollowing) {
         if(following.length) {
             theInside = following.map(fol => {
-                return <ConnectItem  user={fol} key={fol._id} setReload={setReload}/>
+                return <FollowPulled user={fol} key={fol._id} setReload={setReload}/>
             })
         } else {theInside = <p>No Followed users yet</p>}
     } else if(!loading && !onFollowing) {
         if(followers.length) {
-            theInside = following.map(fol => {
-                return <ConnectItem  user={fol} key={fol._id} setReload={setReload}/>
+            theInside = followers.map(fol => {
+                return <FollowPulled user={fol} key={fol._id} setReload={setReload}/>
             })
         } else {theInside = <p>No users following</p>}
     } else if(error) {
