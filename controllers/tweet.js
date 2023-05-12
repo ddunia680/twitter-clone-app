@@ -1,5 +1,6 @@
 const Tweet = require('../models/tweet');
 const User = require('../models/user');
+const Retweet = require('../models/retweet');
 const storage = require('../firebase.config');
 const { ref, uploadBytes, getDownloadURL, deleteObject } = require('firebase/storage');
 
@@ -45,9 +46,28 @@ exports.pullTweets = (req, res) => {
                         ArrayToSend.push(item);
                     }
                 })
-                // console.log(ArrayToSend);
-                res.status(200).json({
-                    tweets: ArrayToSend
+                
+                Retweet.find({retweetedBy: userId}).populate('retweetedBy', {password: 0}).populate('tweet')
+                .then(retweets => {
+                    retweets.forEach(retw => {
+                        const theRetw = {
+                            _id: retw._id,
+                            retweetedBy: retw.retweetedBy.fullname,
+                            by: retw.tweet.by,
+                            text: retw.tweet.text,
+                            media: retw.tweet.media,
+                            location: retw.tweet.location,
+                            likes: retw.tweet.likes,
+                            retweets: retw.tweet.retweets,
+                            views: retw.tweet.views,
+                            comment: retw.tweet.comment,
+                            createdAt: retw.createdAt
+                        }
+                        ArrayToSend.push(theRetw)
+                    })
+                    res.status(200).json({
+                        tweets: ArrayToSend
+                    })
                 })
             })
         })
@@ -66,9 +86,33 @@ exports.pullMyTweets = (req, res) => {
 
     Tweet.find({by: theId}).populate('by', {password: 0})
     .then(tweets => {
-        // console.log(tweets);
-        res.status(200).json({
-            tweets: tweets
+        Retweet.find({retweetedBy: theId}).populate('retweetedBy', {password: 0}).populate('tweet')
+        .then(retweets => {
+            let ArrayToSend = [...tweets];
+            retweets.forEach(retw => {
+                const theRetw = {
+                    _id: retw._id,
+                    retweetedBy: retw.retweetedBy.fullname,
+                    by: retw.tweet.by,
+                    text: retw.tweet.text,
+                    media: retw.tweet.media,
+                    location: retw.tweet.location,
+                    likes: retw.tweet.likes,
+                    retweets: retw.tweet.retweets,
+                    views: retw.tweet.views,
+                    comment: retw.tweet.comment,
+                    createdAt: retw.createdAt
+                }
+                ArrayToSend.push(theRetw)
+            })
+            res.status(200).json({
+                tweets: ArrayToSend
+            })
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'something went wrong server-side'
+            })
         })
     })
     .catch(err => {
@@ -269,15 +313,37 @@ exports.postTweet = async (req, res) => {
 
     Tweet.findById(tweetId).populate('by', {password: 0})
     .then(tweet => {
-        if(tweet.by._id.toString() !== viewedBy.toString()) {
-            tweet.views += 1; 
+        // Case where we found a retweet instead
+        if(!tweet) {
+            Retweet.findById(tweetId).populate('tweet')
+            .then(retw => {
+                res.status(200).json({
+                    views: retw.tweet.views
+                })
+            })
+            .catch(err => res.status(500).json({
+                    message: 'something went wrong server-side'
+            }));
         }
-        return tweet.save();
-    })
-    .then(result => {
-        res.status(201).json({
-            views: result.views
-        })
+        else if(tweet.by._id.toString() !== viewedBy.toString()) {
+            tweet.views += 1; 
+
+            tweet.save()
+                .then(result => {
+                res.status(201).json({
+                    views: result.views
+                })
+            })
+            .catch(err => {
+                res.status(500).json({
+                    message: 'something went wrong server-side'
+                })
+            })
+        } else {
+            res.status(201).json({
+                views: tweet.views
+            })
+        }
     })
     .catch(err => {
         res.status(500).json({
@@ -333,17 +399,54 @@ exports.postTweet = async (req, res) => {
     const retweetedBy = req.params.id;
     const tweetId = req.params.tweetId;
 
-    Tweet.findById(tweetId)
+    Tweet.findById(tweetId).populate('by', {password: 0})
     .then(tweet => {
         tweet.retweets.push(retweetedBy);
-        return tweet.save();
-    })
-    .then(update => {
-        res.status(201).json({
-            retweets: update.retweets
+        tweet.save()
+        .then(update1 => {
+            const retweet = new Retweet({
+                retweetedBy: retweetedBy,
+                tweet: update1._id
+            })
+            return retweet.save();
+        })
+        .then(updated2 => {
+            // This needs to be arranged to operate like a normal tweet with just one extra attribute
+            Retweet.findById(updated2._id).populate('retweetedBy', {password: 0}).populate('tweet')
+            .then(retweet => {
+                const theRetweet = {
+                    _id: retweet._id,
+                    retweetedBy: retweet.retweetedBy.fullname,
+                    by: tweet.by,
+                    text: retweet.tweet.text,
+                    media: retweet.tweet.media,
+                    location: retweet.tweet.location,
+                    likes: retweet.tweet.likes,
+                    retweets: retweet.tweet.retweets,
+                    views: retweet.tweet.views,
+                    comment: retweet.tweet.comment,
+                    createdAt: retweet.createdAt
+                }
+                res.status(201).json({
+                    retweet: theRetweet
+                })
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    message: 'something went wrong server-side'
+                })
+            })
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                message: 'something went wrong server-side'
+            })
         })
     })
     .catch(err => {
+        console.log(err);
         res.status(500).json({
             message: 'something went wrong server-side'
         })

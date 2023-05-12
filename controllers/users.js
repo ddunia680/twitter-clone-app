@@ -64,6 +64,23 @@ exports.moreUsers = (req, res, next) => {
     })
 }
 
+exports.getAUser = (req, res) => {
+    const theId = req.params.id;
+    console.log(theId);
+    User.findById(theId, {password: 0})
+    .then(user => {
+        res.status(200).json({
+            user: user
+        })
+    })
+    .catch(err => {
+        // console.log(err);
+        res.status(500).json({
+            message: 'Something went wrong server-side'
+        })
+    })
+}
+
 exports.followUser = (req, res) => {
     const userId = req.userId;
     const userToFollow = req.body.toFollow;

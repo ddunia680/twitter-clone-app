@@ -27,7 +27,7 @@ const tweetSchema = Schema({
     ],
     retweets: [
         {
-            type: Object
+            type: Schema.Types.ObjectId
         }
     ],
     views: {

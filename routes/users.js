@@ -8,6 +8,8 @@ router.get('/youmlike/:userId', usersControllers.youMLike);
 
 router.get('/moreUsers', isAuth, usersControllers.moreUsers);
 
+router.get('/getAUser/:id', usersControllers.getAUser);
+
 router.post('/followUser', isAuth, usersControllers.followUser);
 
 router.post('/unfollowUser', isAuth, usersControllers.unfollowUser);
