@@ -5,25 +5,41 @@ import mum from '../../images/mum.jpg';
 import dad from '../../images/dad.jpg';
 import cecile from '../../images/cecile3.JPG';
 import './tweet.css';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { ADDRETWEETED } from '../../store/tweets';
 
 function Tweet(props) {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const userId = useSelector(state => state.authenticate.userId);
-    // const token = useSelector(state => state.authenticate.token);
+    const fullname = useSelector(state => state.authenticate.fullname);
     const [showPopUp, setShowPopUp] = useState(false);
     const [isIntersecting, setIsIntersecting] = useState(false);
     const [ilikedIt, setILikedIt] = useState(false);
     const [views, setViews] = useState(props.tweet.views);
     const [likes, setLikes] = useState(props.tweet.likes);
     const [retweets, setRetweets] = useState(props.tweet.retweets);
+    const [gottenId, setgottenId] = useState({});
     const theTweetRef = useRef();
 
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-    const ilikedClasses = ['w-[1.2rem]', ilikedIt ? 'text-blueSpecial' : 'text-gray-500']
+    const ilikedClasses = ['w-[1.2rem]', ilikedIt ? 'text-blueSpecial' : 'text-gray-500'];
+
+    useEffect(() => {
+        if(props.tweet.retweetedBy) {
+            axios.get(`${process.env.REACT_APP_BACKEND_URL}/getAUser/${ props.tweet.by._id ? props.tweet.by._id : props.tweet.by}`)
+            .then(res => {
+                setgottenId(res.data.user);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.tweet.retweetedBy])
 
     useEffect(() => {
         const myLike = likes.find(like => like.toString() === userId);
@@ -81,7 +97,9 @@ function Tweet(props) {
     const issueRetweet = () => {
         axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueRetweet/${userId}/${props.tweet._id}`)
                 .then(res => {
-                    setRetweets(res.data.retweets);
+                    // console.log(res.data.retweet);
+                    setRetweets(res.data.retweet);
+                    dispatch(ADDRETWEETED(res.data.retweet));
                 })
                 .catch(err => {
                     console.log(err);
@@ -89,40 +107,68 @@ function Tweet(props) {
     }
 
     return (
+        <>
+        { props.tweet.retweetedBy ? 
+        <p className='ml-[5%] text-darkTextColor text-[12px] md:text-[14px] flex justify-start items-center font-semibold'><ArrowPathRoundedSquareIcon className='w-[1.2rem]'/>{props.tweet.retweetedBy === fullname? 'You' : props.tweet.retweetedBy} Retweeted</p> 
+        : null}
         <div className='relative w-[100%] flex justify-start items-start pt-2 border-b-[1px] border-darkClose' ref={theTweetRef}>
             {/* <UserCircleIcon className='w-[3rem] md:w-[5rem] px-2 cursor-pointer'/> */}
-            <div className='w-[2.5rem] md:w-[3.2rem] h-[2.5rem] md:h-[3.2rem] rounded-full overflow-hidden bg-gray-700 mx-2 cursor-pointer' onMouseEnter={() => { setTimeout(() => { setShowPopUp(true)}, 1000)}} onMouseLeave={() => { setTimeout(() => {setShowPopUp(false)}, 1000) }} onClick={() => navigate(`/main/${props.tweet.by._id}`)}>
-                <img src={props.tweet.by.profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
+            <div className='w-[2.5rem] md:w-[3.2rem] h-[2.5rem] md:h-[3.2rem] rounded-full overflow-hidden bg-gray-700 mx-2 cursor-pointer' onMouseEnter={() => { setTimeout(() => { setShowPopUp(true)}, 1000)}} onMouseLeave={() => { setTimeout(() => {setShowPopUp(false)}, 1000) }} onClick={
+                () => {
+                props.tweet.retweetedBy ?
+                 navigate(`/main/${gottenId._id}`, { state: {user: gottenId}, replace: false})
+                :
+                navigate(`/main/${ props.tweet.by._id}`)
+                }}>
+                <img src={ props.tweet.retweetedBy? gottenId.profileUrl : props.tweet.by.profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
             </div>
             <div className='relative w-[80%] flex flex-col justify-start items-start pt-1'>
                 {/* User identity */}
                 <div className='text-[13px] md:text-[15px] w-[90%] flex justify-start items-start cursor-pointer'>
                     <p className='w-3/4 md:w-[50%] xl:w-[90%] whitespace-nowrap overflow-x-hidden overflow-ellipsis'>
-                        <span className='text-iconsColor font-bold duration-75 hover:underline hover:duration-75' onMouseEnter={() => { setTimeout(() => { setShowPopUp(true)}, 1000)}} onMouseLeave={() => { setTimeout(() => {setShowPopUp(false)}, 1000) }} onClick={() => navigate(`/main/${props.tweet.by._id}`)}>
-                            {props.tweet.by.fullname}
+                        <span className='text-iconsColor font-bold duration-75 hover:underline hover:duration-75' onMouseEnter={() => { setTimeout(() => { setShowPopUp(true)}, 1000)}} onMouseLeave={() => { setTimeout(() => {setShowPopUp(false)}, 1000) }}  onClick={
+                        () => {
+                            props.tweet.retweetedBy ?
+                            navigate(`/main/${gottenId._id}`, { state: {user: gottenId}, replace: false})
+                            :
+                            navigate(`/main/${ props.tweet.by._id}`)
+                        }}>
+                            { props.tweet.retweetedBy? gottenId.fullname :props.tweet.by.fullname}
                         </span> 
-                        <span className='text-darkTextColor'>{props.tweet.by.tagName}</span>
+                        <span className='text-darkTextColor'>{ props.tweet.retweetedBy? gottenId.tagName : props.tweet.by.tagName}</span>
                     </p> 
-                    <p className='text-darkTextColor w-[3rem]'> {months[new Date(props.tweet.createdAt).getMonth()]} {new Date(props.tweet.createdAt).getDate()}</p>
+                    <p className='text-darkTextColor w-[4rem]'> {months[new Date(props.tweet.createdAt).getMonth()]} {new Date(props.tweet.createdAt).getDate()}</p>
 
                     {/* identity popup */}
                     { showPopUp ? 
-                        <div className='popUp absolute top-[2rem] left-0 w-[17rem] bg-primary rounded-xl z-7 py-2 px-4' onMouseEnter={() => setShowPopUp(true)} onMouseLeave={() => setTimeout(() => {setShowPopUp(false)}, 1000)}>
+                        <div className='popUp absolute top-[2rem] left-0 w-[17rem] bg-primary rounded-xl z-10 py-2 px-4' onMouseEnter={() => setShowPopUp(true)} onMouseLeave={() => setTimeout(() => {setShowPopUp(false)}, 1000)}>
                             <div className='w-[100%] flex justify-between items-center'>
-                                <div className='w-[2.5rem] md:w-[3.2rem] h-[2.5rem] md:h-[3.2rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer' onClick={() => navigate(`/main/${props.tweet.by._id}`)}>
-                                    <img src={props.tweet.by.profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
+                                <div className='w-[2.5rem] md:w-[3.2rem] h-[2.5rem] md:h-[3.2rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer'  onClick={
+                                    () => {
+                                    props.tweet.retweetedBy ?
+                                    navigate(`/main/${gottenId._id}`, { state: {user: gottenId}, replace: false})
+                                    :
+                                    navigate(`/main/${ props.tweet.by._id}`)
+                                    }}>
+                                    <img src={ props.tweet.retweetedBy? gottenId.profileUrl : props.tweet.by.profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
                                 </div>
-                                {props.tweet.by._id !== userId ? 
+                                {props.tweet.by._id !== userId || gottenId._id !== userId ? 
                                     <button className='rounded-full py-1 px-4 bg-iconsColor text-black hover:bg-white font-semibold'>Follow</button>
                                 : <p>You</p>}
                                 
                             </div>
-                            <p className='text-md font-bold text-iconsColor hover:underline' onClick={() => navigate(`/main/${props.tweet.by._id}`)}>{props.tweet.by.fullname}</p>
-                            <p className='text-sm text-darkTextColor'>{props.tweet.by.tagName}</p>
-                            <p className='mt-2 text-iconsColor'>{props.tweet.by.bio}</p>
+                            <p className='text-md font-bold text-iconsColor hover:underline'  onClick={
+                                () => {
+                                props.tweet.retweetedBy ?
+                                navigate(`/main/${gottenId._id}`, { state: {user: gottenId}, replace: false})
+                                :
+                                navigate(`/main/${ props.tweet.by._id}`)
+                                }}>{ props.tweet.retweetedBy? gottenId.fullname : props.tweet.by.fullname}</p>
+                            <p className='text-sm text-darkTextColor'>{ props.tweet.retweetedBy? gottenId.tagName : props.tweet.by.tagName}</p>
+                            <p className='mt-2 text-iconsColor'>{ props.tweet.retweetedBy? gottenId.bio : props.tweet.by.bio}</p>
                             <div className='mt-1 w-[80%] flex justify-between items-center'>
-                                <h4 className='text-darkTextColor text-sm'><span className='font-bold text-iconsColor'>{props.tweet.by.following.length}</span>Following</h4>
-                                <h4 className='text-darkTextColor text-sm'><span className='font-bold text-iconsColor'>{props.tweet.by.followers.length}</span>Followers</h4>
+                                <h4 className='text-darkTextColor text-sm'><span className='font-bold text-iconsColor'>{ props.tweet.retweetedBy? gottenId.following.length : props.tweet.by.following.length}</span>Following</h4>
+                                <h4 className='text-darkTextColor text-sm'><span className='font-bold text-iconsColor'>{ props.tweet.retweetedBy? gottenId.followers.length : props.tweet.by.followers.length}</span>Followers</h4>
                             </div>
                             <div className='flex justify-start items-start w-[100%] mt-2'>
                                 <div className='flex justify-start items-center'>
@@ -253,6 +299,7 @@ function Tweet(props) {
                 </div>
             </div>
         </div>
+    </>
     );
 }
 

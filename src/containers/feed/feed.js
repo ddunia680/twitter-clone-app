@@ -31,7 +31,7 @@ function Feed(props) {
         theTweets = <div className='w-[100%] flex justify-center'><Spinner/></div>
     } else if(loadingState === 'succeeded' && myTweets.length) {
             theTweets = myTweets.map(tweet => {
-                return <Tweet tweet={tweet} by={tweet.by._id} key={tweet._id}/>
+                return <Tweet tweet={tweet} key={tweet._id}/>
             })
     } else if(loadingState === 'failed') {
         theTweets = <p className='mx-auto text-gray-600 text-sm'>something went wrong server-side...</p>
