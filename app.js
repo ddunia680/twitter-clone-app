@@ -24,7 +24,7 @@ const fileFilter = (req, file, cb) => {
     }
 }
 app.use(cors({
-    origin: process.env.FRONT_ENDPOINT,
+    origin: '*',
     credentials: true,
     allowedHeaders: 'Content-Type, Authorization',
     methods: ['POST', 'GET', 'PUT']
