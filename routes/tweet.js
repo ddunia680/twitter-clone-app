@@ -20,4 +20,6 @@ router.post('/issueUnlike/:id/:tweetId', tweetControllers.issueUnlike);
 
 router.post('/issueRetweet/:id/:tweetId', tweetControllers.issueRetweet);
 
+router.post('/issueUndoRetweet/:id/:tweetId/retId', tweetControllers.issueUndoRetweet);
+
 module.exports = router;

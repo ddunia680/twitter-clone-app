@@ -66,7 +66,7 @@ exports.moreUsers = (req, res, next) => {
 
 exports.getAUser = (req, res) => {
     const theId = req.params.id;
-    console.log(theId);
+    // console.log(theId);
     User.findById(theId, {password: 0})
     .then(user => {
         res.status(200).json({

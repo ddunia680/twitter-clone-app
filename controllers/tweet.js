@@ -52,6 +52,7 @@ exports.pullTweets = (req, res) => {
                     retweets.forEach(retw => {
                         const theRetw = {
                             _id: retw._id,
+                            tweetId: retw.tweet._id ,
                             retweetedBy: retw.retweetedBy.fullname,
                             by: retw.tweet.by,
                             text: retw.tweet.text,
@@ -124,6 +125,7 @@ exports.pullMyTweets = (req, res) => {
 
 exports.postTweet = async (req, res) => {
     const userId = req.userId;
+    // console.log(userId);
 
     const pic1 = req.files[0];
     const pic2 = req.files[1];
@@ -451,4 +453,32 @@ exports.postTweet = async (req, res) => {
             message: 'something went wrong server-side'
         })
     })
+ }
+
+ exports.issueUndoRetweet = (req, res) => {
+    const retweetedBy = req.params.id;
+    const tweetId = req.params.tweetId;
+    const retweetId = req.params.retId;
+
+    Tweet.findById(tweetId)
+    .then(tweet => {
+        const theTweetIndex = tweet.retweets.findIndex(el => el.toString() === retweetedBy);
+        tweet.retweets.splice(theTweetIndex, 1);
+        return tweet.save();
+    })
+    .then(tweet => {
+        return Retweet.findByIdAndDelete(retweetId);
+    })
+    .then(result => {
+        res.status(200).json({
+            message: 'successfully unretweeted'
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'something went wrong server-side'
+        })
+    })
+
+
  }
