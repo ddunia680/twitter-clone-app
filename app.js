@@ -29,6 +29,7 @@ app.use(cors({
     allowedHeaders: 'Content-Type, Authorization',
     methods: ['POST', 'GET', 'PUT']
 }));
+console.log(process.env.FRONT_ENDPOINT);
 
 app.use(express.json());
 app.use(bodyParser.json());
