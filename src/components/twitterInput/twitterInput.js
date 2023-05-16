@@ -16,10 +16,13 @@ import people3 from '../../gifs/people3.json';
 import axios from 'axios';
 import Spinner from '../../UI/spinner/spinner';
 import { PUSHNEWTWEET } from '../../store/tweets';
+import { useNavigate } from 'react-router-dom';
 
 function TwitterInput(props) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const profileUrl = useSelector(state => state.authenticate.profileUrl);
+    const focusInput = useSelector(state => state.uiStates.focusNewTweet);
     const token = useSelector(state => state.authenticate.token);
     const [onGif, setOnGif] = useState(false);
     const [theGif, setTheGif] = useState(null);
@@ -71,6 +74,9 @@ function TwitterInput(props) {
             setInputedText(''); setMyLocation(''); setShowLocationView(false);
             setIsPickerVisibile(false);
             dispatch(PUSHNEWTWEET(res.data.tweet));
+            if(window.innerWidth <= 500)  {
+                navigate('/main');
+            }
         })
         .catch(err => {
             setLoading(false);
@@ -79,14 +85,16 @@ function TwitterInput(props) {
     }
 
     return (
-        <div className='hidden relative md:flex w-[100%] md:mt-[5.8rem] justify-start items-start border-b-[1px] border-darkClose py-3 px-2'>
-            {/* <UserCircleIcon className=' w-[3rem] md:w-[4rem] text-darkComponentVar' /> */}
-            <div className='w-[3rem] h-[3rem] rounded-full overflow-hidden bg-gray-700'>
-                <img src={profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
+        <div className='relative md:flex w-[100%] md:mt-[5.8rem] justify-start items-start border-b-[1px] border-darkClose py-3 px-2'>
+            <div className='w-[100%] flex justify-between items-center px-[0.5rem]'>
+                <div className='w-[3rem] h-[3rem] rounded-full overflow-hidden bg-gray-700'>
+                    <img src={profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
+                </div>
+                <XMarkIcon className='w-[1.5rem] bg-darkComponentVar text-iconsColor rounded-full hover:bg-darkClose' onClick={() => navigate(-1)}/>
             </div>
             
             <div className='flex flex-col justify-start items-start py-1 px-2 space-y-2 w-[100%]'>
-                <input type='text' placeholder="What's happening?" className='textarea h-[3rem] w-[85%] bg-transparent  focus:outline-none text-lg' onChange={e => setInputedText(e.target.value)} value={inputedText}/>
+                <input type='text' placeholder="What's happening?" className='textarea h-[3rem] w-[85%] bg-transparent  focus:outline-none text-lg' onChange={e => setInputedText(e.target.value)} value={inputedText} autoFocus={focusInput}/>
                 {/* Location */}
                 { showLocationView ?
                     <div className='w-[100%] flex justify-start items-center'>
@@ -180,7 +188,7 @@ function TwitterInput(props) {
 
                 {/* Emoji Picker */}
                 { isPickerVisible ? 
-                    <div className='w-content absolute z-10 top-[3rem]'>
+                    <div className='w-content md:absolute z-10 top-[3rem]'>
                         <Picker data={data} theme='dark' previewPostion='none' onEmojiSelect={e => {
                             setInputedText(inputedText + e.native);
                             setIsPickerVisibile(!isPickerVisible);

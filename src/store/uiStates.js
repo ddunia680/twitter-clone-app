@@ -14,7 +14,8 @@ const uiStates = createSlice({
         onUserReplies: false,
         onUserMedia: false,
         onUserLikes: false,
-        connectIU: false
+        connectIU: false,
+        focusNewTweet: false
     },
     reducers: {
         SETONFORYOU: (state, action) => {
@@ -76,6 +77,9 @@ const uiStates = createSlice({
         },
         SETCONNECTUI: (state, action) => {
             state.connectIU = action.payload;
+        },
+        FOCUSONNEWTWEET: (state, action) => {
+            state.focusNewTweet = action.payload;
         }
     }
 });
@@ -92,7 +96,8 @@ export const {
     SETONFEED,
     SETONUSERIDENTITY,
     SETONMOREPEOPLE,
-    SETCONNECTUI
+    SETCONNECTUI,
+    FOCUSONNEWTWEET
 } = uiStates.actions;
 
 export default uiStates.reducer;

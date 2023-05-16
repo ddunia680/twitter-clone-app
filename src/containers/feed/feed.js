@@ -7,9 +7,11 @@ import Tweet from '../../components/tweet/tweet';
 import { useDispatch, useSelector } from 'react-redux';
 import { pullTweets } from '../../store/tweets';
 import Spinner from '../../UI/spinner/spinner';
+import { useNavigate } from 'react-router-dom';
 
 function Feed(props) {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const token = useSelector(state => state.authenticate.token);
     const loadingState = useSelector(state => state.tweets.loadingState);
     const myTweets = useSelector(state => state.tweets.tweets);
@@ -42,9 +44,13 @@ function Feed(props) {
     return (
         <div className='feed relative w-[100%] md:w-[50%] h-[93vh] md:h-[100vh] overflow-y-scroll flex flex-col justify-start items-start'>
             <FeedHead/>
-            <TwitterInput/>
+            { window.innerWidth > 500 ? <TwitterInput/> : null}
             {theTweets}
-            <div className='md:hidden fixed bottom-[3rem] right-[1rem] p-[1rem] rounded-full bg-blueSpecial' title='Tweet'>
+            <div className='md:hidden fixed bottom-[3rem] right-[1rem] p-[1rem] rounded-full bg-blueSpecial' title='Tweet' onClick={() => {
+                if(window.innerWidth <= 500) {
+                    navigate('/newTweet');
+                }
+            }}>
                 <PlusIcon className='w-[1rem] text-iconsColor' />
             </div>
         </div>

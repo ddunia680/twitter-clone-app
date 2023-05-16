@@ -11,6 +11,7 @@ import ConnectView from './containers/connectView/connectView';
 import RightMenu from './containers/rightMenu/rightMenu';
 import BottomMenu from './containers/bottomMenu/bottomMenu';
 import UserFollowCenter from './containers/userFollowCenter/userFollowCenter';
+import TwitterInput from './components/twitterInput/twitterInput';
 
 function App() {
   const dispatch = useDispatch();
@@ -63,8 +64,9 @@ function App() {
           <Route path=':id/followCenter' element={<UserFollowCenter/>}/>
         </Route>
         { window.innerWidth <= 500 ? <Route path='search' element={<RightMenu/>} /> : null}
+        { window.innerWidth <= 500 ? <Route path='newTweet' element={<TwitterInput/>} /> : null}
       </Routes>
-      { window.innerWidth <= 500 ? <BottomMenu/> : null}
+      { window.innerWidth <= 500 && token ? <BottomMenu/> : null}
     </div>
   );
 }

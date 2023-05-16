@@ -6,6 +6,7 @@ import { faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { LOGOUT } from '../../store/authenticate';
 import { useNavigate } from 'react-router-dom';
+import { FOCUSONNEWTWEET } from '../../store/uiStates';
 
 function LeftMenu(props) {
     const dispatch = useDispatch();
@@ -86,7 +87,7 @@ function LeftMenu(props) {
             </div>
 
             {/* Tweet */}
-            <div className=' px-[1rem] xl:px-[5rem] py-[1rem] text-lg font-bold bg-blueSpecial rounded-full cursor-pointer' title='tweet'>
+            <div className=' px-[1rem] xl:px-[5rem] py-[1rem] text-lg font-bold bg-blueSpecial rounded-full cursor-pointer' title='tweet' onClick={() => dispatch(FOCUSONNEWTWEET(true))}>
                 <PlusIcon className='w-[2rem] block xl:hidden'/>
                 <p className='hidden xl:block'>Tweet</p>
             </div>
