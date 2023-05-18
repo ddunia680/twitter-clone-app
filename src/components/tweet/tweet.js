@@ -8,7 +8,7 @@ import './tweet.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ADDRETWEETED } from '../../store/tweets';
+import { ADDRETWEETED, REMOVETWEET, UPDATERETWEETS } from '../../store/tweets';
 
 function Tweet(props) {
     const navigate = useNavigate();
@@ -54,10 +54,12 @@ function Tweet(props) {
     }, [likes]);
 
     useEffect(() => {
-        const myRetweet = retweets.find(retw => retw.toString() === userId);
-        if(myRetweet) {
-            setIRetweeted(true);
-        } else { setIRetweeted(false) }
+        if(retweets.length) {
+            const myRetweet = retweets.findIndex(retw => retw.toString() === userId);
+            if(myRetweet <= 0) {
+                setIRetweeted(true);
+            } else { setIRetweeted(false) }
+            }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [retweets]);
 
@@ -73,20 +75,24 @@ function Tweet(props) {
 
     useEffect(() => {
         if(isIntersecting) {
-            axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueView/${userId}/${props.tweet._id}`)
-            .then(res => {
-                setViews(res.data.views);
-            })
-            .catch(err => {
-                console.log(err);
-            })
+            if(props.tweet.by.toString() === userId || (props.tweet.retweetedBy && gottenId._id === userId)) {
+                return;
+            } else {
+                axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueView/${props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id}`)
+                .then(res => {
+                    setViews(res.data.views);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+            }
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isIntersecting]);
 
     const issueLikeHandler = () => {
         if(ilikedIt) {
-            axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueUnlike/${userId}/${props.tweet._id}`)
+            axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueUnlike/${userId}/${props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id}`)
                 .then(res => {
                     setLikes(res.data.likes);
                 })
@@ -94,7 +100,7 @@ function Tweet(props) {
                     console.log(err);
                 })
         } else {
-            axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueLike/${userId}/${props.tweet._id}`)
+            axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueLike/${userId}/${props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id}`)
                 .then(res => {
                     setLikes(res.data.likes);
                 })
@@ -107,7 +113,6 @@ function Tweet(props) {
     const issueRetweet = () => {
         axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueRetweet/${userId}/${props.tweet.retweetedBy? props.tweet.tweetId : props.tweet._id}`)
                 .then(res => {
-                    // console.log(res.data.retweet);
                     setRetweets(res.data.retweet);
                     dispatch(ADDRETWEETED(res.data.retweet));
                 })
@@ -118,10 +123,16 @@ function Tweet(props) {
 
     const undoRetweet = () => {
         axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueUndoRetweet/${userId}/${props.tweet.tweetId}/${props.tweet._id}`)
+        .then(res => {
+            dispatch(REMOVETWEET(props.tweet._id));
+            dispatch(UPDATERETWEETS({case1: props.tweet.tweetId, case2: props.tweet._id, id: userId }));
+        })
+        .catch(err => console.log(err));
     }
 
     return (
-        <>
+        <div className='userIdent relative w-[100%]' onClick={
+            () => navigate(`/main/innerTweet/${props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id}`, {state: {retweetedBy: props.tweet.retweetedBy ? props.tweet.retweetedBy : null , replace: false}})}>
         { props.tweet.retweetedBy ? 
         <p className='ml-[5%] text-darkTextColor text-[12px] md:text-[14px] flex justify-start items-center font-semibold'><ArrowPathRoundedSquareIcon className='w-[1.2rem]'/>{props.tweet.retweetedBy === fullname? 'You' : props.tweet.retweetedBy} Retweeted</p> 
         : null}
@@ -315,7 +326,7 @@ function Tweet(props) {
                 </div>
             </div>
         </div>
-    </>
+    </div>
     );
 }
 

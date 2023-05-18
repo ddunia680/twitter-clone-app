@@ -243,7 +243,7 @@ function UserIdentity(props) {
     }
 
     return (
-        <div className=' relative w-[100%] h-[100vh] flex justify-start items-start '>
+        <div className='relative w-[100%] h-[100vh] flex justify-start items-start '>
             <LeftMenu/>
             <div className='userIdent relative w-[100%] md:w-[50%] h-[93vh] md:h-[100vh] overflow-y-scroll flex flex-col justify-start items-start text-iconsColor bg-primary backdrop-blur-md bg-opacity-80' ref={myIdentityView} onScroll={e => onScroll()}>
                 {/* Header */}

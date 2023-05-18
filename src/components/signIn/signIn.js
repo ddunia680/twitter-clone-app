@@ -17,7 +17,6 @@ function SignIn(props) {
     const [passwordType, setPasswordType] = useState('password');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    console.log(process.env.REACT_APP_BACKEND_URL);
 
     const [emailIsTouched, setEmailIsTouched] = useState('');
     const [passwordIsTouched, setPasswordIsTouched] = useState('');

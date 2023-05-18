@@ -85,12 +85,12 @@ function TwitterInput(props) {
     }
 
     return (
-        <div className='relative md:flex w-[100%] md:mt-[5.8rem] justify-start items-start border-b-[1px] border-darkClose py-3 px-2'>
-            <div className='w-[100%] flex justify-between items-center px-[0.5rem]'>
+        <div className='relative flex flex-col md:flex-row w-[100%] md:mt-[5.8rem] justify-start items-start border-b-[1px] border-darkClose py-3 px-2'>
+            <div className='w-[100%] md:w-[5rem] flex justify-between items-center px-[0.5rem]'>
                 <div className='w-[3rem] h-[3rem] rounded-full overflow-hidden bg-gray-700'>
                     <img src={profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
                 </div>
-                <XMarkIcon className='w-[1.5rem] bg-darkComponentVar text-iconsColor rounded-full hover:bg-darkClose' onClick={() => navigate(-1)}/>
+                { window.innerWidth <= 500 ? <XMarkIcon className='w-[1.5rem] bg-darkComponentVar text-iconsColor rounded-full hover:bg-darkClose' onClick={() => navigate(-1)}/> : null}
             </div>
             
             <div className='flex flex-col justify-start items-start py-1 px-2 space-y-2 w-[100%]'>

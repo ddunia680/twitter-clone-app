@@ -50,6 +50,22 @@ const tweetSlice = createSlice({
             state.tweets.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
             state.myTweets.push(action.payload);
             state.myTweets.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        },
+        REMOVETWEET: (state, action) => {
+                state.tweets = state.tweets.filter(twt => twt._id !== action.payload);
+                state.myTweets = state.myTweets.filter(twt => twt._id !== action.payload);
+        },
+        UPDATERETWEETS: (state, action) => {
+            state.tweets.forEach(tweet => {
+                if(tweet._id === action.payload.case1 || tweet._id === action.payload.case2) {
+                    tweet.retweets.filter(rtw => rtw !== action.payload.id);
+                }
+            })
+            state.myTweets.forEach(tweet => {
+                if(tweet._id === action.payload.case1 || tweet._id === action.payload.case2) {
+                    tweet.retweets.filter(rtw => rtw !== action.payload.id);
+                }
+            })
         }
     }, 
     extraReducers(builder) {
@@ -85,6 +101,6 @@ const tweetSlice = createSlice({
     }
 });
 
-export const { PUSHNEWTWEET, ADDRETWEETED } = tweetSlice.actions;
+export const { PUSHNEWTWEET, ADDRETWEETED, REMOVETWEET, UPDATERETWEETS } = tweetSlice.actions;
 
 export default tweetSlice.reducer;

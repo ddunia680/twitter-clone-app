@@ -1,4 +1,15 @@
 .userIdent::-webkit-scrollbar {
-    display: none;
-    /* color: #421010; */
+    width: 5px;
+}
+
+.userIdent::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.userIdent::-webkit-scrollbar-thumb {
+    background: #71767b;
+}
+
+.userIdent::-webkit-scrollbar-thumb:hover {
+    background: #d6d9db;
 }
