@@ -1,5 +1,6 @@
 const Tweet = require('../models/tweet');
 const User = require('../models/user');
+const Comment = require('../models/comment');
 const Retweet = require('../models/retweet');
 const storage = require('../firebase.config');
 const { ref, uploadBytes, getDownloadURL, deleteObject } = require('firebase/storage');
@@ -310,44 +311,51 @@ exports.postTweet = async (req, res) => {
  }
 
  exports.issueView = (req, res) => {
-    const viewedBy = req.params.id;
     const tweetId = req.params.tweetId;
 
-    Tweet.findById(tweetId).populate('by', {password: 0})
+    Tweet.findById(tweetId)
     .then(tweet => {
-        // Case where we found a retweet instead
         if(!tweet) {
-            Retweet.findById(tweetId).populate('tweet')
-            .then(retw => {
-                res.status(200).json({
-                    views: retw.tweet.views
-                })
-            })
-            .catch(err => res.status(500).json({
-                    message: 'something went wrong server-side'
-            }));
-        }
-        else if(tweet.by._id.toString() !== viewedBy.toString()) {
-            tweet.views += 1; 
-
-            tweet.save()
+            Comment.findById(tweetId)
+            .then(comment => {
+                comment.views += 1;
+                comment.save()
                 .then(result => {
-                res.status(201).json({
-                    views: result.views
+                    res.status(201).json({
+                        views: result.views
+                    })
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        message: 'something went wrong server-side'
+                    })
                 })
             })
             .catch(err => {
+                console.log(err);
                 res.status(500).json({
                     message: 'something went wrong server-side'
                 })
             })
         } else {
-            res.status(201).json({
-                views: tweet.views
+            tweet.views += 1;
+            tweet.save()
+            .then(tweet => {
+                res.status(201).json({
+                    views: tweet.views
+                })
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    message: 'something went wrong server-side'
+                })
             })
         }
     })
     .catch(err => {
+        console.log(err);
         res.status(500).json({
             message: 'something went wrong server-side'
         })
@@ -418,6 +426,7 @@ exports.postTweet = async (req, res) => {
             .then(retweet => {
                 const theRetweet = {
                     _id: retweet._id,
+                    tweetId: retweet.tweet._id,
                     retweetedBy: retweet.retweetedBy.fullname,
                     by: tweet.by,
                     text: retweet.tweet.text,
@@ -475,10 +484,159 @@ exports.postTweet = async (req, res) => {
         })
     })
     .catch(err => {
+        // console.log(err);
         res.status(500).json({
             message: 'something went wrong server-side'
         })
     })
+ }
 
+ exports.comment = (req, res) => {
+    const userId = req.userId;
+    const theImage = req.files[0];
+    const text = req.body.text;
+    const commentTo = req.body.commentTo;
+    if(theImage) {
+        uploadAnImage(theImage, url => {
+            const comment = new Comment({
+                by: userId,
+                commentTo: commentTo,
+                text: text,
+                media: [url],
+            })
+            return comment.save();
+        })
+        .then(com => {
+            Tweet.findById(commentTo)
+            .then(tweet => {
+                if(!tweet) {
+                    Comment.findById(commentTo)
+                    .then(comm => {
+                        comm.comment.push(com._id);
+                        return comm.save();
+                    })
+                } else {
+                    tweet.comment.push(com._id);
+                    return tweet.save();
+                }
+            })
+            .then(result => {
+                Comment.findById(com._id).populate('by', {password: 0})
+                .then(comment => {
+                    res.status(201).json({
+                        comment: comment
+                    })
+                })
+                .catch(err => {
+                    res.status(500).json({
+                        message: 'something went wrong server-side'
+                    })
+                })
+            })
+            .catch(err => {
+                res.status(500).json({
+                    message: 'something went wrong server-side'
+                })
+            })
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'something went wrong server-side'
+            })
+        })
+    } else {
+         const comment = new Comment({
+                by: userId,
+                commentTo: commentTo,
+                text: text
+            })
+            comment.save()
+            .then(com => {
+                Tweet.findById(commentTo)
+                .then(tweet => {
+                    if(!tweet) {
+                        Comment.findById(commentTo)
+                        .then(comm => {
+                            comm.comment.push(com._id);
+                            return comm.save();
+                        })
+                    } else {
+                        tweet.comment.push(com._id);
+                        return tweet.save();
+                    }
+                })
+                .then(result => {
+                    Comment.findById(com._id).populate('by', {password: 0})
+                    .then(comment => {
+                        res.status(201).json({
+                            comment: comment
+                        })
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            message: 'something went wrong server-side'
+                        })
+                    })
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        message: 'something went wrong server-side'
+                    })
+                })
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    message: 'something went wrong server-side'
+                })
+            })
+    }
+ }
 
+ exports.pullComments = (req, res) => {
+    const tweetId = req.params.tweetId;
+
+    Comment.find({commentTo: tweetId}).populate('by', {password: 0})
+    .then(comments => {
+        res.status(200).json({
+            comments: comments
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'something went wrong server-side'
+        })
+    })
+ }
+
+ exports.getATweet = (req, res) => {
+    const tweetId = req.params.tweetId;
+
+    Tweet.findById(tweetId).populate('by', {password: 0})
+    .then(tweet => {
+        if(!tweet) {
+            Comment.findById(tweetId).populate('by', {password: 0})
+            .then(comment => {
+                res.status(200).json({
+                    tweet: comment
+                })
+            })
+            .catch(err => {
+                res.status(500).json({
+                    message: 'something went wrong server-side'
+                })
+            })
+        } else {
+           res.status(200).json({
+                tweet: tweet
+            }) 
+        }
+        
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'something went wrong server-side'
+        })
+    })
  }

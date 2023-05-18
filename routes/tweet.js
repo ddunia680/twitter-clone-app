@@ -12,7 +12,7 @@ router.get('/pullMyTweets/:id', isAuth, tweetControllers.pullMyTweets);
 
 router.get('/tweetsCount/:id', isAuth, tweetControllers.tweetsCount);
 
-router.post('/issueView/:id/:tweetId', tweetControllers.issueView);
+router.post('/issueView/:tweetId', tweetControllers.issueView);
 
 router.post('/issueLike/:id/:tweetId', tweetControllers.issueLike);
 
@@ -20,6 +20,12 @@ router.post('/issueUnlike/:id/:tweetId', tweetControllers.issueUnlike);
 
 router.post('/issueRetweet/:id/:tweetId', tweetControllers.issueRetweet);
 
-router.post('/issueUndoRetweet/:id/:tweetId/retId', tweetControllers.issueUndoRetweet);
+router.post('/issueUndoRetweet/:id/:tweetId/:retId', tweetControllers.issueUndoRetweet);
+
+router.post('/comment', isAuth, tweetControllers.comment);
+
+router.get('/tweetComments/:tweetId', isAuth, tweetControllers.pullComments);
+
+router.get('/getATweet/:tweetId', isAuth, tweetControllers.getATweet);
 
 module.exports = router;

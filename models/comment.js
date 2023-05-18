@@ -5,17 +5,20 @@ const Schema = mongoose.Schema;
 const commentSchema = Schema({
     by: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     commentTo: {
         type: Schema.Types.ObjectId,
-        ref: 'Tweet'
+        ref: 'Tweet',
+        required: true
     },
     text: {
-        type: String
+        type: String,
+        required: true
     },
     media: {
-        type: String
+        type: Array
     },
     likes: [
         {
@@ -26,19 +29,17 @@ const commentSchema = Schema({
     ,
     retweets: [
         {
-            type: Schema.Types.ObjectId,
-            ref: 'User'
+            type: Schema.Types.ObjectId
         }
     ],
-    views: [
+    views:
         {
-            type: Schema.Types.ObjectId,
-            ref: 'User'
-        }
-    ],
+            type: Number,
+            default: 0
+        },
     comment: [
         {
-            type: Object,
+            type: Schema.Types.ObjectId,
             ref: 'Comment'
         }
     ]
