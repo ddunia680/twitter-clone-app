@@ -28,4 +28,6 @@ router.get('/tweetComments/:tweetId', isAuth, tweetControllers.pullComments);
 
 router.get('/getATweet/:tweetId', isAuth, tweetControllers.getATweet);
 
+router.post('/storeNotification', isAuth, tweetControllers.storeNotification);
+
 module.exports = router;

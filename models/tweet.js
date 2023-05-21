@@ -22,7 +22,8 @@ const tweetSchema = Schema({
     },
     likes: [
         {
-            type: Object
+            type: Schema.Types.ObjectId,
+            ref: 'User'
         }
     ],
     retweets: [
