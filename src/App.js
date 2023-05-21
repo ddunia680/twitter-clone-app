@@ -13,6 +13,8 @@ import BottomMenu from './containers/bottomMenu/bottomMenu';
 import UserFollowCenter from './containers/userFollowCenter/userFollowCenter';
 import TwitterInput from './components/twitterInput/twitterInput';
 import TweetView from './containers/tweetView/tweetView';
+import InBuilding from './containers/inBuilding/inBuilding';
+import Notification from './containers/notification/notification';
 
 function App() {
   const dispatch = useDispatch();
@@ -67,6 +69,9 @@ function App() {
         </Route>
         { window.innerWidth <= 500 ? <Route path='search' element={<RightMenu/>} /> : null}
         { window.innerWidth <= 500 ? <Route path='newTweet' element={<TwitterInput/>} /> : null}
+        <Route path='/underConst/:route' element={<InBuilding/>} />
+        <Route path='/notification' element={<Notification/>} />
+        <Route path='*' element={token ? <MainView/> : <AuthContainer/>}/>
       </Routes>
       { window.innerWidth <= 500 && token ? <BottomMenu/> : null}
     </div>

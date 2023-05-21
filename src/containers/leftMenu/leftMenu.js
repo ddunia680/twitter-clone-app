@@ -25,7 +25,7 @@ function LeftMenu(props) {
             </div>
             
             {/* Home */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Home'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Home' onClick={() => navigate('/main')}>
                 <div className='relative'>
                     <HomeIcon className='w-[1.7rem]'/>
                     <div className='absolute top-[-2px] right-0 bg-blueSpecial w-[8px] h-[8px] rounded-full'></div>
@@ -35,19 +35,19 @@ function LeftMenu(props) {
             </div>
 
             {/* Explore */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Explore'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Explore' onClick={() => navigate(`/underConst/${'Explore'}`)}>
                 <HashtagIcon className='w-[1.7rem]'/>
                 <h2 className='hidden xl:block text-xl text-iconsColor'>Explore</h2>
             </div>
 
             {/* Community */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Community'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Community' onClick={() => navigate(`/underConst/${'Community'}`)}>
                 <UsersIcon className='w-[1.7rem]'/>
                 <h2 className='hidden xl:block text-xl text-iconsColor'>Community</h2>
             </div>
 
             {/* Notifications */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Notifications'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Notifications' onClick={() => navigate(`/notification`)}>
                 <div className='relative'>
                     <BellIcon className='w-[1.7rem]'/>
                     <div className='absolute top-[-3px] right-[-5px] bg-blueSpecial py-[1px] px-[6px] rounded-full text-[10px] border-[1px] border-primary'>1</div>
@@ -57,13 +57,13 @@ function LeftMenu(props) {
             </div>
 
             {/* Messages */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Messages'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Messages' onClick={() => navigate(`/underConst/${'Messages'}`)}>
                 <EnvelopeIcon className='w-[1.7rem]'/>
                 <h2 className='hidden xl:block text-xl text-iconsColor'>Messages</h2>
             </div>
 
             {/* Bookmarks */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Bookmarks'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Bookmarks' onClick={() => navigate(`/underConst/${'Bookmarks'}`)}>
                 <BookmarkIcon className='w-[1.7rem]'/>
                 <h2 className='hidden xl:block text-xl text-iconsColor'>Bookmarks</h2>
             </div>
@@ -81,7 +81,7 @@ function LeftMenu(props) {
             </div>
 
             {/* More */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='more'>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='more' onClick={() => navigate(`/underConst/${'More'}`)}>
                 <EllipsisHorizontalCircleIcon className='w-[1.7rem]'/>
                 <h2 className='hidden xl:block text-xl text-iconsColor'>More</h2>
             </div>

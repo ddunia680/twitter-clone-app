@@ -34,6 +34,11 @@ function SmallSMenu(props) {
         navigate(`/main/${userId}`);
     }
 
+    const goToComponent = (comp) => {
+        dispatch(SETSHOWLEFTSMENU(false));
+         navigate(`/underConst/${comp}`);
+    }
+
     const Mclasses = ['w-[80%] bg-closestToPrimary h-[100vh] py-[3px] px-[1rem] border-r-[1px] border-darkComponent flex flex-col', isVisible ? 'mountSlide' : 'unmountSlide'];
 
     return (
@@ -62,27 +67,27 @@ function SmallSMenu(props) {
             {/* Second section */}
             <div className='w-[100%] flex flex-col justify-start items-start space-y-[1rem] pt-[0.5rem] border-b-[1px] border-darkComponent pb-[1.5rem]'>
                 {/* profile */}
-                <div className='w-[100%] flex justify-start items-center space-x-[1rem] text-iconsColor'>
-                    <UserIcon className='font-bold w-[20px]' />
+                <div className='w-[100%] flex justify-start items-center space-x-[1rem] text-iconsColor' onClick={() => goToProfile()}>
+                    <UserIcon className='font-bold w-[20px]'/>
                     <p className='font-bold text-[17px]'>Profile</p>
                 </div>
                 {/* Topics */}
-                <div className='w-[100%] flex justify-start items-center space-x-[1rem] text-iconsColor'>
+                <div className='w-[100%] flex justify-start items-center space-x-[1rem] text-iconsColor' onClick={() => goToComponent('Topics')}>
                     <ChatBubbleLeftIcon className='font-bold w-[20px]' />
                     <p className='font-bold text-[17px]'>Topics</p>
                 </div>
                 {/* Bookmarks */}
-                <div className='w-[100%] flex justify-start items-center space-x-[1rem] text-iconsColor'>
-                    <BookmarkIcon className='font-bold w-[20px]' />
+                <div className='w-[100%] flex justify-start items-center space-x-[1rem] text-iconsColor' onClick={() => goToComponent('Bookmarks')}>
+                    <BookmarkIcon className='font-bold w-[20px]'/>
                     <p className='font-bold text-[17px]'>Bookmarks</p>
                 </div>
                 {/* Lists */}
-                <div className='w-[100%] flex justify-start items-center space-x-[1rem] text-iconsColor'>
+                <div className='w-[100%] flex justify-start items-center space-x-[1rem] text-iconsColor' onClick={() => goToComponent('Lists')}>
                     <ListBulletIcon className='font-bold w-[20px]' />
                     <p className='font-bold text-[17px]'>Lists</p>
                 </div>
                 {/* Twitter Circles */}
-                <div className='w-[100%] flex justify-start items-center space-x-[1rem] text-iconsColor'>
+                <div className='w-[100%] flex justify-start items-center space-x-[1rem] text-iconsColor' onClick={() => goToComponent('Twitter Circles')}>
                     <UserIcon className='font-bold w-[20px]' />
                     <p className='font-bold text-[17px]'>Twitter Circles</p>
                 </div>

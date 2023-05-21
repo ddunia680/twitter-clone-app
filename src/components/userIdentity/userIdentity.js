@@ -65,7 +65,7 @@ function UserIdentity(props) {
             setTheIdForPull(locationState.state.user._id);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [id]);
 
     useEffect(() => {
         if(Object.keys(otherUser).length) {

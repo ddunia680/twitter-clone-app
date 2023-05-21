@@ -26,11 +26,11 @@ function Tweet(props) {
     const [showUndoRetweet, setShowUndoRetweet] = useState(false);
     const theTweetRef = useRef();
     // console.log(props.tweet);
-
+    
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     const ilikedClasses = ['w-[1.2rem]', ilikedIt ? 'text-blueSpecial' : 'text-gray-500'];
-    const iRetweetedClasses = ['w-[1.2rem]', iRetweeted ? 'text-blueSpecial' : 'text-gray-500']
+    const iRetweetedClasses = ['w-[1.2rem]', iRetweeted ? 'text-blueSpecial' : 'text-gray-500'];
 
     useEffect(() => {
         if(props.tweet.retweetedBy) {
@@ -111,6 +111,9 @@ function Tweet(props) {
     }
 
     const issueRetweet = () => {
+        if(props.isComment) {
+            return;
+        }
         axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueRetweet/${userId}/${props.tweet.retweetedBy? props.tweet.tweetId : props.tweet._id}`)
                 .then(res => {
                     setRetweets(res.data.retweet);
@@ -122,6 +125,9 @@ function Tweet(props) {
     }
 
     const undoRetweet = () => {
+        if(props.isComment) {
+            return;
+        }
         axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueUndoRetweet/${userId}/${props.tweet.tweetId}/${props.tweet._id}`)
         .then(res => {
             dispatch(REMOVETWEET(props.tweet._id));
