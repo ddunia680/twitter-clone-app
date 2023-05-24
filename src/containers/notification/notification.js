@@ -1,14 +1,52 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LeftMenu from '../leftMenu/leftMenu';
 import RightMenu from '../rightMenu/rightMenu';
 import NotificationItem from '../../components/notificationItem/notificationItem';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import Spinner from '../../UI/spinner/spinner';
 
 function Notification(props) {
+    const token = useSelector(state => state.authenticate.token);
+    // const userId = useSelector(state => state.authenticate.userId);
+    // console.log(userId);
     const [onAll, setOnAll] = useState(true);
     const [onVerfied, setOnVerified] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     const onForYouClasses = ['w-fit h-[100%] mx-auto border-b-[5px] text-sm md:text-md py-2', onAll ? 'border-blueSpecial' : 'border-transparent'];
-    const onFollowingClasses = ['w-fit h-[100%] mx-auto border-b-[5px] text-sm md:text-md py-2', onVerfied ? 'border-blueSpecial' : 'border-transparent'];;
+    const onFollowingClasses = ['w-fit h-[100%] mx-auto border-b-[5px] text-sm md:text-md py-2', onVerfied ? 'border-blueSpecial' : 'border-transparent'];
+
+    useEffect(() => {
+        setLoading(true);
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/getNotifications`, {
+            headers: {
+                Authorization: 'Bearer '+token
+            }
+        })
+        .then(res => {
+            setLoading(false);
+            setNotifications(res.data.notifications);
+        })
+        .catch(err => {
+            setLoading(false);
+            console.log(err);
+        })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    let theNotifs = <p className='mx-auto text-gray-600 text-sm mt-[1rem]'>No notifications so far</p>
+    if(loading) {
+        theNotifs = <div className='w-[100%] flex justify-center mt-[1rem]'><Spinner/></div>
+    } else if(notifications.length && !loading) {
+        theNotifs = notifications.map(notif => {
+            return <NotificationItem notification={notif} key={notif._id}/>
+        })
+    } else {
+        theNotifs = <p className='mx-auto text-gray-600 text-sm mt-[1rem]'>No notifications so far</p>
+    }
+
     return (
         <div className=' relative w-[100%] h-[100vh] flex justify-start items-start'>
             { window.innerWidth > 500 ? <LeftMenu/> : null}
@@ -20,7 +58,7 @@ function Notification(props) {
                 </div>
 
                 {/* top nav */}
-                <div className='flex justify-between items-end w-[100%]'>
+                <div className='flex justify-between items-end w-[100%] z-10'>
                     <div className='w-1/2 h-[2.5rem] hover:bg-darkClose cursor-pointer' onClick={
                         () => {setOnAll(true); setOnVerified(false)}}>
                         <h4 className={onForYouClasses.join(' ')}>All</h4>
@@ -30,7 +68,7 @@ function Notification(props) {
                         <h4 className={onFollowingClasses.join(' ')}>Verified</h4>
                     </div>
                 </div>
-                <NotificationItem/>
+                {theNotifs}
             </div>
             </div>
             { window.innerWidth > 500 ? <RightMenu/> :null}

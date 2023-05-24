@@ -44,6 +44,7 @@ const tweetSlice = createSlice({
     reducers: {
         PUSHNEWTWEET: (state, action) => {
             state.tweets.push(action.payload);
+            state.tweets.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         },
         ADDRETWEETED: (state, action) => {
             state.tweets.push(action.payload);

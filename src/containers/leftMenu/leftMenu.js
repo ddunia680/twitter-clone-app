@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { HomeIcon, EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import { HashtagIcon, UsersIcon, BellIcon, EnvelopeIcon, BookmarkIcon, UserIcon, EllipsisHorizontalCircleIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,16 +7,38 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LOGOUT } from '../../store/authenticate';
 import { useNavigate } from 'react-router-dom';
 import { FOCUSONNEWTWEET } from '../../store/uiStates';
+import axios from 'axios';
 
 function LeftMenu(props) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const userId = useSelector(state => state.authenticate.userId)
+    const userId = useSelector(state => state.authenticate.userId);
+    const token = useSelector(state => state.authenticate.token);
     const profileUrl = useSelector(state => state.authenticate.profileUrl);
     const fullname = useSelector(state => state.authenticate.fullname);
     const tagName = useSelector(state => state.authenticate.tagName);
+    const [notificationsCount, setNotificationsCount] = useState(0);
 
     const [showLogout, setShowLogout] = useState(false);
+
+    useEffect(() => {
+        if(token) {
+            axios.get(`${process.env.REACT_APP_BACKEND_URL}/getNotificationsCount`, {
+                headers: {
+                    Authorization: 'Bearer '+token
+                }
+            })
+            .then(res => {
+                setNotificationsCount(res.data.number);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token]);
+
+
     return (
         <div className='hidden md:flex relative w-[10%] xl:w-[20%] h-[100vh] flex-col justify-start items-center xl:items-start p-[1rem] border-r-[1px] border-darkClose space-y-2 font-mono'>
             {/* The bird */}
@@ -47,10 +69,13 @@ function LeftMenu(props) {
             </div>
 
             {/* Notifications */}
-            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Notifications' onClick={() => navigate(`/notification`)}>
+            <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='Notifications' onClick={() => {
+                navigate(`/notification`);
+                setNotificationsCount(0);
+                }}>
                 <div className='relative'>
                     <BellIcon className='w-[1.7rem]'/>
-                    <div className='absolute top-[-3px] right-[-5px] bg-blueSpecial py-[1px] px-[6px] rounded-full text-[10px] border-[1px] border-primary'>1</div>
+                    { notificationsCount > 0 ? <div className='absolute top-[-3px] right-[-5px] bg-blueSpecial py-[1px] px-[6px] rounded-full text-[10px] border-[1px] border-primary'>{notificationsCount}</div> : null}
                 </div>
                 
                 <h2 className='hidden xl:block text-xl text-iconsColor'>Notifications</h2>

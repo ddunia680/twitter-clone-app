@@ -79,6 +79,7 @@ function TwitterInput(props) {
             }
         })
         .catch(err => {
+            console.log(err);
             setLoading(false);
             alert(err.response.data.message);
         })
