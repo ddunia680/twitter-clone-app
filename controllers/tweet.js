@@ -152,57 +152,90 @@ exports.postTweet = async (req, res) => {
     const text = req.body.text;
     const gif = req.body.gif;
     const myLocation = req.body.mylocation;
-    
-    if(pic1 && pic2 && pic3 && pic4) {
-        uploadAnImage(pic1, url1 => {
-            uploadAnImage(pic2, url2 => {
-                uploadAnImage(pic3, url3 => {
-                    uploadAnImage(pic4, url4 => {
-                        const tweet = new Tweet({
-                            by: userId,
-                            text: text,
-                            media: [url1, url2, url3, url4],
-                            gif: gif,
-                            location: myLocation
-                        });
-                        tweet.save()
-                        .then(tweet => {
-                            Tweet.findById(tweet._id).populate('by', {password: 0})
-                            .then(theTweet => {
-                                res.status(201).json({
-                                    tweet: theTweet
-                                })
-                            })
-                            .catch(err => {
-                                res.status(500).json({
-                                    message: 'something went wrong server-side'
-                                })
-                            })
-                            
-                        })
-                        .catch(err => {
-                            res.status(500).json({
-                                message: 'something went wrong server-side'
-                            })
-                        })
-                    })
-                })
-            })
-        })
-    } else if(pic1 && pic2 && pic3 && !pic4) {
-        uploadAnImage(pic1, url1 => {
+    User.findById(userId, {following: 1})
+    .then(user => {
+        if(pic1 && pic2 && pic3 && pic4) {
+            uploadAnImage(pic1, url1 => {
                 uploadAnImage(pic2, url2 => {
                     uploadAnImage(pic3, url3 => {
-                        const tweet = new Tweet({
-                            by: userId,
-                            text: text,
-                            media: [url1, url2, url3],
-                            location: myLocation,
-                            gif: gif,
-                        });
-                        tweet.save()
-                        .then(tweet => {
-                            Tweet.findById(tweet._id).populate('by', {password: 0})
+                        uploadAnImage(pic4, url4 => {
+                            const tweet = new Tweet({
+                                by: userId,
+                                text: text,
+                                media: [url1, url2, url3, url4],
+                                gif: gif,
+                                location: myLocation
+                            });
+                            tweet.save()
+                            .then(tweet => {
+                                Tweet.findById(tweet._id).populate('by', {password: 0})
+                                .then(theTweet => {
+                                    res.status(201).json({
+                                        tweet: theTweet
+                                    })
+                                })
+                                .catch(err => {
+                                    res.status(500).json({
+                                        message: 'something went wrong server-side'
+                                    })
+                                })
+                                
+                            })
+                            .catch(err => {
+                                res.status(500).json({
+                                    message: 'something went wrong server-side'
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        } else if(pic1 && pic2 && pic3 && !pic4) {
+            uploadAnImage(pic1, url1 => {
+                    uploadAnImage(pic2, url2 => {
+                        uploadAnImage(pic3, url3 => {
+                            const tweet = new Tweet({
+                                by: userId,
+                                text: text,
+                                media: [url1, url2, url3],
+                                location: myLocation,
+                                gif: gif,
+                            });
+                            tweet.save()
+                            .then(tweet => {
+                                Tweet.findById(tweet._id).populate('by', {password: 0})
+                                .then(theTweet => {
+                                    res.status(201).json({
+                                        tweet: theTweet
+                                    })
+                                })
+                                .catch(err => {
+                                    res.status(500).json({
+                                        message: 'something went wrong server-side'
+                                    })
+                                })
+                            })
+                            .catch(err => {
+                                res.status(500).json({
+                                    message: 'something went wrong server-side'
+                                })
+                            })
+                        })
+                    })
+                })
+        } else if(pic1 && pic2 && !pic3 && !pic4) {
+            uploadAnImage(pic1, url1 => {
+                uploadAnImage(pic2, url2 => {
+                    const tweet = new Tweet({
+                        by: userId,
+                        text: text,
+                        media: [url1, url2],
+                        location: myLocation,
+                        gif: gif,
+                    });
+                    tweet.save()
+                    .then(tweet => {
+                        Tweet.findById(tweet._id).populate('by', {password: 0})
                             .then(theTweet => {
                                 res.status(201).json({
                                     tweet: theTweet
@@ -213,22 +246,20 @@ exports.postTweet = async (req, res) => {
                                     message: 'something went wrong server-side'
                                 })
                             })
-                        })
-                        .catch(err => {
-                            res.status(500).json({
-                                message: 'something went wrong server-side'
-                            })
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            message: 'something went wrong server-side'
                         })
                     })
                 })
             })
-    } else if(pic1 && pic2 && !pic3 && !pic4) {
-         uploadAnImage(pic1, url1 => {
-            uploadAnImage(pic2, url2 => {
+        } else if(pic1 && !pic2 && !pic3 && !pic4) {
+            uploadAnImage(pic1, url1 => {
                 const tweet = new Tweet({
                     by: userId,
                     text: text,
-                    media: [url1, url2],
+                    media: [url1],
                     location: myLocation,
                     gif: gif,
                 });
@@ -252,63 +283,34 @@ exports.postTweet = async (req, res) => {
                     })
                 })
             })
-        })
-    } else if(pic1 && !pic2 && !pic3 && !pic4) {
-        uploadAnImage(pic1, url1 => {
+        } else {
             const tweet = new Tweet({
-                by: userId,
-                text: text,
-                media: [url1],
-                location: myLocation,
-                gif: gif,
-            });
-            tweet.save()
-            .then(tweet => {
-                Tweet.findById(tweet._id).populate('by', {password: 0})
-                    .then(theTweet => {
-                        res.status(201).json({
-                            tweet: theTweet
+                    by: userId,
+                    text: text,
+                    location: myLocation,
+                    gif: gif,
+                });
+                tweet.save()
+                .then(tweet => {
+                    Tweet.findById(tweet._id).populate('by', {password: 0})
+                        .then(theTweet => {
+                            res.status(201).json({
+                                tweet: theTweet
+                            })
                         })
-                    })
-                    .catch(err => {
-                        res.status(500).json({
-                            message: 'something went wrong server-side'
+                        .catch(err => {
+                            res.status(500).json({
+                                message: 'something went wrong server-side'
+                            })
                         })
-                    })
-            })
-            .catch(err => {
-                res.status(500).json({
-                    message: 'something went wrong server-side'
                 })
-            })
-        })
-    } else {
-         const tweet = new Tweet({
-                by: userId,
-                text: text,
-                location: myLocation,
-                gif: gif,
-            });
-            tweet.save()
-            .then(tweet => {
-                Tweet.findById(tweet._id).populate('by', {password: 0})
-                    .then(theTweet => {
-                        res.status(201).json({
-                            tweet: theTweet
-                        })
+                .catch(err => {
+                    res.status(500).json({
+                        message: 'something went wrong server-side'
                     })
-                    .catch(err => {
-                        res.status(500).json({
-                            message: 'something went wrong server-side'
-                        })
-                    })
-            })
-            .catch(err => {
-                res.status(500).json({
-                    message: 'something went wrong server-side'
                 })
-            })
-    }
+        }
+    })
  }
 
  exports.tweetsCount = (req, res) => {
@@ -392,9 +394,30 @@ exports.postTweet = async (req, res) => {
                 return comm.save();
             })
             .then(update => {
-               res.status(201).json({
-                    likes: update.likes
-                }) 
+                if(likedBy === update.by.valueOf()) {
+                    // console.log('they were same');
+                    res.status(201).json({
+                        likes: update.likes
+                    })
+                } else {
+                    const notification = new Notification({
+                        isLike: true,
+                        item: update._id,
+                        by: likedBy,
+                        to: [update.by]
+                    })
+                    notification.save()
+                    .then(notif => {
+                        res.status(201).json({
+                            likes: update.likes
+                        })
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            message: 'something went wrong server-side'
+                        })
+                    })
+                }
             })
             .catch(err => {
                 res.status(500).json({
@@ -405,9 +428,29 @@ exports.postTweet = async (req, res) => {
             tweet.likes.push(likedBy);
             tweet.save()
             .then(update => {
-                res.status(201).json({
-                    likes: update.likes
-                })
+                if(likedBy === update.by.valueOf()) {
+                    res.status(201).json({
+                        likes: update.likes
+                    })
+                } else {
+                    const notification = new Notification({
+                        isLike: true,
+                        item: update._id,
+                        by: likedBy,
+                        to: [update.by]
+                    })
+                    notification.save()
+                    .then(notif => {
+                        res.status(201).json({
+                            likes: update.likes
+                        })
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            message: 'something went wrong server-side'
+                        })
+                    })
+                }
             })
             .catch(err => {
                 res.status(500).json({
@@ -587,9 +630,29 @@ exports.postTweet = async (req, res) => {
             .then(result => {
                 Comment.findById(com._id).populate('by', {password: 0})
                 .then(comment => {
-                    res.status(201).json({
-                        comment: comment
-                    })
+                    if(userId === comment.by.valueOf()) {
+                        res.status(201).json({
+                            comment: comment
+                        })
+                    } else {
+                        const notification = new Notification({
+                            isComment: true,
+                            item: comment._id,
+                            by: userId,
+                            to: [result.by]
+                        })
+                        notification.save()
+                        .then(notif => {
+                            res.status(201).json({
+                                comment: comment
+                            })
+                        })
+                        .catch(err => {
+                            res.status(500).json({
+                                message: 'something went wrong server-side'
+                            })
+                        })
+                    }                    
                 })
                 .catch(err => {
                     res.status(500).json({
@@ -632,9 +695,29 @@ exports.postTweet = async (req, res) => {
                 .then(result => {
                     Comment.findById(com._id).populate('by', {password: 0})
                     .then(comment => {
-                        res.status(201).json({
-                            comment: comment
-                        })
+                        if(userId === comment.by.valueOf()) {
+                            res.status(201).json({
+                                comment: comment
+                            })
+                        } else {
+                            const notification = new Notification({
+                                isComment: true,
+                                item: comment._id,
+                                by: userId,
+                                to: [result.by]
+                            })
+                            notification.save()
+                            .then(notif => {
+                                res.status(201).json({
+                                    comment: comment
+                                })
+                            })
+                            .catch(err => {
+                                res.status(500).json({
+                                    message: 'something went wrong server-side'
+                                })
+                            })
+                        }
                     })
                     .catch(err => {
                         res.status(500).json({
@@ -836,6 +919,65 @@ exports.storeNotification = (req, res) => {
     .then(notif => {
         res.status(200).json({
             notification: notif
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'something went wrong server-side'
+        })
+    })
+}
+
+exports.getNotificationsCount = (req, res) => {
+    const me = req.userId;
+
+    Notification.find({seen: false, to: me }).count()
+    .then(number => {
+        // console.log(number);
+        res.status(200).json({
+            number: number
+        })
+    })
+    .catch(err => {
+        // console.log(err);
+        res.status(500).json({
+            message: 'something went wrong server-side'
+        })
+    })
+}
+
+exports.getNotifications = (req, res) => {
+    const me = req.userId;
+
+    Notification.find({seen: false, to: me}).populate('by', {password: 0})
+    .then(notifications => {
+        res.status(200).json({
+            notifications: notifications
+        })  
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'something went wrong server-side'
+        })
+    })
+}
+
+exports.notificationSeen = (req, res) => {
+    const notifId = req.params.id;
+
+    Notification.findById(notifId)
+    .then(notification => {
+        notification.seen = true;
+        notification.save()
+        .then(update => {
+            res.status(201).json({
+                seen: update.seen
+            })
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: 'something went wrong server-side'
+            })
         })
     })
     .catch(err => {

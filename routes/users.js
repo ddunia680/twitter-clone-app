@@ -20,4 +20,6 @@ router.get('/searchUser/:value/:myId', usersControllers.searchUsers);
 
 router.get('/followCenter/:id', usersControllers.pullFollowCenter);
 
+router.get('/following', isAuth, usersControllers.pullFollowing);
+
 module.exports = router;

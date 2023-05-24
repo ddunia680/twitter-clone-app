@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Notification = require('../models/notification');
 
 exports.youMLike = (req, res, next) => {
     const userId = req.params.userId;
@@ -95,8 +96,22 @@ exports.followUser = (req, res) => {
                 user.followers.push({_id: me._id, profileUrl: me.profileUrl, fullname: me.fullname, tagName: me.tagName});
                 user.save()
                 .then(response => {
-                    res.status(200).json({
-                        message: 'followed user successfully'
+                    const notification = new Notification({
+                        isFollow: true,
+                        item: userId,
+                        by: userId,
+                        to: [userToFollow]
+                    })
+                    notification.save()
+                    .then(notif => {
+                        res.status(200).json({
+                            message: 'followed user successfully'
+                        })
+                    })
+                    .catch(err => {
+                        res.status(500).json({
+                            message: 'something went wrong server-side'
+                        })
                     })
                 })
                 .catch(err => {
@@ -216,4 +231,20 @@ exports.pullFollowCenter = (req, res) => {
         })
     })
         
+}
+
+exports.pullFollowing = (req, res) => {
+    const userId = req.userId;
+
+    User.findById(userId, {following: 1})
+    .then(user => {
+        res.status(200).json({
+            following: user.following
+        })
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'Something went wrong server-side'
+        })
+    })
 }
