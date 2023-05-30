@@ -630,14 +630,14 @@ exports.postTweet = async (req, res) => {
             .then(result => {
                 Comment.findById(com._id).populate('by', {password: 0})
                 .then(comment => {
-                    if(userId === comment.by.valueOf()) {
+                    if(userId === result.by.valueOf()) {
                         res.status(201).json({
                             comment: comment
                         })
                     } else {
                         const notification = new Notification({
                             isComment: true,
-                            item: comment._id,
+                            item: commentTo,
                             by: userId,
                             to: [result.by]
                         })
@@ -695,14 +695,14 @@ exports.postTweet = async (req, res) => {
                 .then(result => {
                     Comment.findById(com._id).populate('by', {password: 0})
                     .then(comment => {
-                        if(userId === comment.by.valueOf()) {
+                        if(userId === result.by.valueOf()) {
                             res.status(201).json({
                                 comment: comment
                             })
                         } else {
                             const notification = new Notification({
                                 isComment: true,
-                                item: comment._id,
+                                item: commentTo,
                                 by: userId,
                                 to: [result.by]
                             })
