@@ -95,19 +95,20 @@ mongoose.connect(process.env.MONGODB_API_KEY)
                 if(!tweet) {
                     Comment.findById(comment.commentTo).populate('by', {password: 0})
                     .then(comm => {
+                        // console.log(comm.by._id.valueOf());
                         comm.by.followers.forEach(fol => {
-                            // console.log(fol._id.valueOf());
                             socket.to(fol._id.valueOf()).emit('gotComment', comment);
                         })
+                        socket.to(comm.by._id.valueOf()).emit('commentToMyTweet', comment);
                     })
                 } else {
+                    // console.log(tweet.by._id.valueOf());
                     tweet.by.followers.forEach(fol => {
-                        // console.log(fol._id.valueOf());
                         socket.to(fol._id.valueOf()).emit('gotComment', comment);
                     })
+                    socket.to(tweet.by._id.valueOf()).emit('commentToMyTweet', comment);
                 }
-            })
-            
+            })            
         })
 
         socket.on("connect_error", (err) => {
