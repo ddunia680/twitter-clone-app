@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../../UI/spinner/spinner';
-// import cecile from '../../images/cecile3.JPG';
+import io from '../../utility/socket';
 
 function ToFollow(props) {
     const navigate = useNavigate();
@@ -37,6 +37,15 @@ function ToFollow(props) {
             setLoading(false);
             setFollowStatus(true);
             props.setReload(true);
+            if(io.getIO()) {
+                const notif = {
+                    isFollow: true,
+                    item: userId,
+                    by: userId,
+                    to: [props.user._id]
+                }
+                io.getIO().emit('followedSomeone', notif);
+            }
         })
         .catch(err => {
             setLoading(false);

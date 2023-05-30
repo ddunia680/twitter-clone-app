@@ -9,6 +9,7 @@ import Picker from '@emoji-mart/react';
 import data from '@emoji-mart/data';
 import Spinner from '../../UI/spinner/spinner';
 import Tweet from '../../components/tweet/tweet';
+import io from '../../utility/socket';
 
 function TweetView(props) {
     const navigate = useNavigate();
@@ -43,6 +44,21 @@ function TweetView(props) {
     }, [id]);
 
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    useEffect(() => {
+        if(io.getIO()) {
+            io.getIO().on('gotComment', comm => {
+                console.log('notification reached');
+                console.log( tweet._id);
+                console.log(comm.commentTo);
+                if(tweet._id === comm.commentTo) {
+                    console.log('got a new comment');
+                    setComments([...comments, comm]);
+                }
+            })
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [io.getIO()]);
 
     useEffect(() => {
         if(tweet) {
@@ -81,6 +97,9 @@ function TweetView(props) {
             setLoading(false);
             setMyReply('');
             setComments([...comments, res.data.comment]);
+            if(io.getIO()) {
+                io.getIO().emit('madeAComment', res.data.comment);
+            }
         })
         .catch(err => {
             setLoading(false);
@@ -213,19 +232,19 @@ function TweetView(props) {
 
                         {tweet ? 
                             <div className='text-darkTextColor text-[13px] md:text-[16px] border-b-[1px] border-darkClose w-[100%] py-[0.5rem] flex justify-evenly items-center space-x-[3rem]'>
-                                <div className='hover:bg-darkComponentVar rounded-full flex justify-start items-center' title='Comment'>
+                                <div className='rounded-full flex justify-start items-center' title='comment'>
                                     <ChatBubbleBottomCenterIcon className='w-[1rem] md:w-[2rem] p-0 md:p-[0.3rem]'/>
                                     {tweet.comment.length}
                                 </div>
-                                <div className='hover:bg-darkComponentVar rounded-full flex justify-start items-center' title='Comment'>
+                                <div className='rounded-full flex justify-start items-center' title='retweets'>
                                     <ArrowPathRoundedSquareIcon className='w-[1rem] md:w-[2rem] p-0 md:p-[0.3rem]'/>
                                     {tweet.retweets.length}
                                 </div>
-                                <div className='hover:bg-darkComponentVar rounded-full flex justify-start items-center' title='Comment'>
+                                <div className='rounded-full flex justify-start items-center' title='likes'>
                                     <HeartIcon className='w-[1rem] md:w-[2rem] p-0 md:p-[0.3rem]'/>
                                     {tweet.likes.length}
                                 </div>
-                                <div className='hover:bg-darkComponentVar rounded-full' title='Comment'>
+                                <div className='rounded-full' title='share'>
                                     <ArrowDownTrayIcon className='w-[1rem] md:w-[2rem] p-0 md:p-[0.3rem]'/>
                                 </div>
                             </div>

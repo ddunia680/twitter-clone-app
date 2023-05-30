@@ -16,6 +16,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Spinner from '../../UI/spinner/spinner';
 import { pullMyTweets } from '../../store/tweets';
+import io from '../../utility/socket';
 
 function UserIdentity(props) {
     const dispatch = useDispatch();
@@ -193,6 +194,15 @@ function UserIdentity(props) {
                 setLoading(false);
                 setIsFollowed(true);
                 console.log('user followed successfully');
+                if(io.getIO()) {
+                const notif = {
+                    isFollow: true,
+                    item: userId,
+                    by: userId,
+                    to: [otherUser._id]
+                }
+                io.getIO().emit('followedSomeone', notif);
+            }
             })
             .catch(err => {
                 setLoading(false);

@@ -5,9 +5,11 @@ import { CheckBadgeIcon } from '@heroicons/react/24/solid';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import io from '../../utility/socket';
 
 function ConnectItem(props) {
     const token = useSelector(state => state.authenticate.token);
+    const userId = useSelector(state => state.authenticate.userId);
     const navigate = useNavigate();
 
     const issueFollowHandler = () => {
@@ -25,6 +27,15 @@ function ConnectItem(props) {
         .then(res => {
             console.log('followed user');
             props.setReload(true);
+            if(io.getIO()) {
+                const notif = {
+                    isFollow: true,
+                    item: userId,
+                    by: userId,
+                    to: [props.user._id]
+                }
+                io.getIO().emit('followedSomeone', notif);
+            }
         })
         .catch(err => {
             console.log(err);

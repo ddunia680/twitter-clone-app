@@ -17,6 +17,7 @@ import axios from 'axios';
 import Spinner from '../../UI/spinner/spinner';
 import { PUSHNEWTWEET } from '../../store/tweets';
 import { useNavigate } from 'react-router-dom';
+import io from '../../utility/socket';
 
 function TwitterInput(props) {
     const dispatch = useDispatch();
@@ -76,6 +77,10 @@ function TwitterInput(props) {
             dispatch(PUSHNEWTWEET(res.data.tweet));
             if(window.innerWidth <= 500)  {
                 navigate('/main');
+            }
+            if(io.getIO()) {
+                const theIO = io.getIO();
+                theIO.emit('newTweet', res.data.tweet);
             }
         })
         .catch(err => {

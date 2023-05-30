@@ -8,6 +8,7 @@ import { LOGOUT } from '../../store/authenticate';
 import { useNavigate } from 'react-router-dom';
 import { FOCUSONNEWTWEET } from '../../store/uiStates';
 import axios from 'axios';
+import io from '../../utility/socket';
 
 function LeftMenu(props) {
     const dispatch = useDispatch();
@@ -38,7 +39,18 @@ function LeftMenu(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
+    useEffect(() => {
+        if(io.getIO()) {
+            io.getIO().on('gotALike', (notif) => {
+                setNotificationsCount(notificationsCount + 1);
+            })
 
+            io.getIO().on('gotAFollower', (notif) => {
+                setNotificationsCount(notificationsCount + 1);
+            })
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [io.getIO()]);
     return (
         <div className='hidden md:flex relative w-[10%] xl:w-[20%] h-[100vh] flex-col justify-start items-center xl:items-start p-[1rem] border-r-[1px] border-darkClose space-y-2 font-mono'>
             {/* The bird */}

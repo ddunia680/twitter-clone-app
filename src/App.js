@@ -15,13 +15,40 @@ import TwitterInput from './components/twitterInput/twitterInput';
 import TweetView from './containers/tweetView/tweetView';
 import InBuilding from './containers/inBuilding/inBuilding';
 import Notification from './containers/notification/notification';
+import io from './utility/socket';
+import { PUSHNEWTWEET } from './store/tweets';
 
 function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const keptToken = localStorage.getItem('token');
   const token = useSelector(state => state.authenticate.token);
-  const expiryDate = localStorage.getItem('expiryDate')
+  const userId = useSelector(state => state.authenticate.userId);
+  const expiryDate = localStorage.getItem('expiryDate');
+
+useEffect(() => {
+  if(token) {
+    // if(!io.getIO) {
+      const socket = io.init(process.env.REACT_APP_BACKEND_URL);
+      socket.emit('setup', userId);
+
+      socket.on('connection', () => {
+        console.log('socket is connected');
+      })
+    // }
+  } 
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, [token]);
+
+useEffect(() => {
+  if(io.getIO()) {
+    io.getIO().on('gotNewTweet', tweet => {
+      console.log(tweet);
+      dispatch(PUSHNEWTWEET(tweet));
+    })
+  }
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
 
   useEffect(() => {
     if(new Date(expiryDate).getTime() <= new Date().getTime()) {

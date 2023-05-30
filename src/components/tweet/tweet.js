@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ADDRETWEETED, REMOVETWEET, UPDATERETWEETS } from '../../store/tweets';
+import io from '../../utility/socket';
 
 function Tweet(props) {
     const navigate = useNavigate();
@@ -27,7 +28,7 @@ function Tweet(props) {
     const [gottenUser, setgottenUser] = useState({});
     const [showUndoRetweet, setShowUndoRetweet] = useState(false);
     const theTweetRef = useRef();
-    // console.log(following);
+    // console.log(props.tweet);
     
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -103,6 +104,12 @@ function Tweet(props) {
                 axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueView/${props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id}`)
                 .then(res => {
                     setViews(res.data.views);
+                    if(io.getIO()) {
+                        io.getIO().emit('madeAView', {
+                            tweet: props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id,
+                            by: props.tweet.retweetedBy ? props.tweet.by : props.tweet.by._id
+                        })
+                    }
                 })
                 .catch(err => {
                     console.log(err);
@@ -111,6 +118,26 @@ function Tweet(props) {
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isIntersecting]);
+
+    useEffect(() => {
+        if(io.getIO()) {
+            const theTweet = props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id;
+            io.getIO().on('gotALike', (notif) => {
+                
+                // console.log(notif);
+                if(theTweet === notif.item) {
+                    setLikes([...likes, notif.by]);
+                }
+            });
+
+            io.getIO().on('gotView', tweet => {
+                if(tweet === theTweet) {
+                    setViews(views + 1);
+                }
+            })
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [io.getIO()]);
 
     const issueLikeHandler = () => {
         if(ilikedIt) {
@@ -124,7 +151,21 @@ function Tweet(props) {
         } else {
             axios.post(`${process.env.REACT_APP_BACKEND_URL}/issueLike/${userId}/${props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id}`)
                 .then(res => {
+                    // console.log(res.data.likes);
                     setLikes(res.data.likes);
+                    const theCreator = props.tweet.retweetedBy ? props.tweet.by : props.tweet.by._id
+                    if(userId !== theCreator) {
+                        if(io.getIO()) {
+                            const notification = {
+                                isLike: true,
+                                item: props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id,
+                                by: userId,
+                                to: props.tweet.retweetedBy ? props.tweet.by : props.tweet.by._id
+                            }
+
+                            io.getIO().emit('madeALike', notification);
+                        }
+                    }
                 })
                 .catch(err => {
                     console.log(err);

@@ -1,13 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { HomeIcon } from '@heroicons/react/24/solid';
 import { MagnifyingGlassIcon, UsersIcon, BellIcon, EnvelopeIcon, MegaphoneIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SETSHOWLEFTSMENU } from '../../store/uiStates';
+import axios from 'axios';
 
 function BottomMenu(props) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const token = useSelector(state => state.authenticate.token);
+    const [notificationsCount, setNotificationsCount] = useState(0);
+
+    useEffect(() => {
+        if(token) {
+            axios.get(`${process.env.REACT_APP_BACKEND_URL}/getNotificationsCount`, {
+                headers: {
+                    Authorization: 'Bearer '+token
+                }
+            })
+            .then(res => {
+                setNotificationsCount(res.data.number);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token]);
 
     const goToComponent = (comp) => {
         dispatch(SETSHOWLEFTSMENU(false));
@@ -33,10 +53,11 @@ function BottomMenu(props) {
 
             {/* Community */}
             <UsersIcon className='w-[1.3rem] text-iconsColor duration-75 hover:bg-gray-50 hover:duration-75'  onClick={() => goToComponent('Community')}/>
+
             {/* Notification */}
             <div className='relative' onClick={() => navigate('/notification')}>
                 <BellIcon className='w-[1.3rem] text-iconsColor duration-75 hover:bg-gray-50 hover:duration-75' />
-                <div className='absolute top-[-3px] right-[-7px] bg-blueSpecial py-[1px] px-[5px] rounded-full text-[10px] border-[1px] border-primary'>1</div>
+                { notificationsCount > 0 ? <div className='absolute top-[-3px] right-[-7px] bg-blueSpecial py-[1px] px-[5px] rounded-full text-[10px] border-[1px] border-primary'>{notificationsCount}</div> : null}
             </div>
             
             {/* Messages */}
