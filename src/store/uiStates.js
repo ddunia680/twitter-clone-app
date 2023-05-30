@@ -6,15 +6,11 @@ const uiStates = createSlice({
         onForYou: true,
         onFolliwing: false,
         onUpdates: false,
-        onFeed: true,
-        onUserIdentity: false,
-        onMorePeople: false,
         showLeftMenu: false,
         onUserTweet: true,
         onUserReplies: false,
         onUserMedia: false,
         onUserLikes: false,
-        connectIU: false,
         focusNewTweet: false
     },
     reducers: {
@@ -60,24 +56,6 @@ const uiStates = createSlice({
         SETSHOWLEFTSMENU: (state, action) => {
             state.showLeftMenu = action.payload;
         },
-        SETONUSERIDENTITY: (state, action) => {
-            state.onFeed = false;
-            state.onUserIdentity = true;
-            state.onMorePeople = false;
-        },
-        SETONFEED: (state, action) => {
-            state.onFeed = true;
-            state.onUserIdentity = false;
-            state.onMorePeople = false;
-        },
-        SETONMOREPEOPLE: (state, action) => {
-            state.onFeed = false;
-            state.onUserIdentity = false;
-            state.onMorePeople = true;
-        },
-        SETCONNECTUI: (state, action) => {
-            state.connectIU = action.payload;
-        },
         FOCUSONNEWTWEET: (state, action) => {
             state.focusNewTweet = action.payload;
         }
@@ -93,10 +71,6 @@ export const {
     SETONUSERMEDIA,
     SETONUSERLIKES,
     SETSHOWLEFTSMENU,
-    SETONFEED,
-    SETONUSERIDENTITY,
-    SETONMOREPEOPLE,
-    SETCONNECTUI,
     FOCUSONNEWTWEET
 } = uiStates.actions;
 

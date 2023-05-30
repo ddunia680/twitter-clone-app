@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ToFollow from '../../components/toFollow/toFollow';
 import { useDispatch, useSelector } from 'react-redux';
-import { SETCONNECTUI } from '../../store/uiStates';
 import Spinner from '../../UI/spinner/spinner';
 import axios from 'axios';
 import { YOUMIGHTLIKEDATA } from '../../store/users';
@@ -50,7 +49,6 @@ function YouMightLike(props) {
             {theUsersArray}
             <p className='px-[1rem] text-[15px] md:text-md text-blueSpecial cursor-pointer hover:text-purple-500' onClick={() => {
                 navigate('/main/connect');
-                dispatch(SETCONNECTUI(true));
                 }}>Show more</p>
         </div>
     );

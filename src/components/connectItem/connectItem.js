@@ -10,6 +10,8 @@ import io from '../../utility/socket';
 function ConnectItem(props) {
     const token = useSelector(state => state.authenticate.token);
     const userId = useSelector(state => state.authenticate.userId);
+    const profileUrl = useSelector(state => state.authenticate.profileUrl);
+    const fullname = useSelector(state => state.authenticate.fullname);
     const navigate = useNavigate();
 
     const issueFollowHandler = () => {
@@ -31,7 +33,11 @@ function ConnectItem(props) {
                 const notif = {
                     isFollow: true,
                     item: userId,
-                    by: userId,
+                    by: {
+                        userId: userId,
+                        profileUrl: profileUrl,
+                        fullname: fullname
+                    },
                     to: [props.user._id]
                 }
                 io.getIO().emit('followedSomeone', notif);

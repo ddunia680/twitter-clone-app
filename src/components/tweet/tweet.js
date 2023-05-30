@@ -159,9 +159,14 @@ function Tweet(props) {
                             const notification = {
                                 isLike: true,
                                 item: props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id,
-                                by: userId,
+                                by: {
+                                    userId: userId, 
+                                    profileUrl: props.tweet.retweetedBy ? gottenUser.profileUrl : props.tweet.by.profileUrl,
+                                    fullname: props.tweet.retweetedBy ? gottenUser.fullname : props.tweet.by.fullname
+                                },
                                 to: props.tweet.retweetedBy ? props.tweet.by : props.tweet.by._id
                             }
+                            // console.log(notification);
 
                             io.getIO().emit('madeALike', notification);
                         }
@@ -201,7 +206,11 @@ function Tweet(props) {
 
     return (
         <div className='userIdent relative w-[100%]' onClick={
-            () => navigate(`/main/innerTweet/${props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id}`, {state: {retweetedBy: props.tweet.retweetedBy ? props.tweet.retweetedBy : null , replace: false}})}>
+            (e) => {
+                if(e.target instanceof HTMLDivElement) {
+                    navigate(`/main/innerTweet/${props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id}`, {state: {retweetedBy: props.tweet.retweetedBy ? props.tweet.retweetedBy : null , replace: false}})
+                }
+            }}>
         { props.tweet.retweetedBy ? 
         <p className='ml-[5%] text-darkTextColor text-[12px] md:text-[14px] flex justify-start items-center font-semibold'><ArrowPathRoundedSquareIcon className='w-[1.2rem]'/>{props.tweet.retweetedBy === fullname? 'You' : props.tweet.retweetedBy} Retweeted</p> 
         : null}
@@ -363,7 +372,7 @@ function Tweet(props) {
                     {/* Comments */}
                     <div className='flex justify-start items-center'>
                         <div className='p-[0.4rem] rounded-full duration-75 hover:bg-blueLight hover:text-blueSpecial hover:duration-75 cursor-pointer' title={`${props.tweet.comment.length} comments`}>
-                            <ChatBubbleBottomCenterIcon className='w-[1.2rem]'/>
+                            <ChatBubbleBottomCenterIcon className='w-[1.2rem]' onClick={() => navigate(`/main/innerTweet/${props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id}`, {state: {retweetedBy: props.tweet.retweetedBy ? props.tweet.retweetedBy : null , replace: false}})}/>
                         </div>
                         <p>{props.tweet.comment.length}</p>
                     </div>

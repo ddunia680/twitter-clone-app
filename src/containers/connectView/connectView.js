@@ -8,7 +8,6 @@ import BottomMenu from '../bottomMenu/bottomMenu';
 import LeftMenu from '../leftMenu/leftMenu';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { SETCONNECTUI } from '../../store/uiStates';
 import { MOREUSERS } from '../../store/users';
 import axios from 'axios';
 import Spinner from '../../UI/spinner/spinner';
@@ -55,11 +54,10 @@ function ConnectView(props) {
     return (
         <div className=' relative w-[100%] h-[100vh] flex justify-start items-start '>
             <LeftMenu/>
-            <div className='feed relative w-[100%] md:w-[50%] h-[93vh] md:h-[100vh] flex flex-col justify-start items-start bg-primary z-20 px-4'>
+            <div className='feed relative w-[100vw] md:w-[50%] h-[93vh] md:h-[100vh] flex flex-col justify-start items-start bg-primary z-20 px-4'>
                 <div className='w-[100%] flex justify-start items-center space-x-4 p-2'>
                     <div className='p-[0.7rem] bg-transparent text-iconsColor rounded-full hover:bg-darkComponent cursor-pointer' onClick={() => {
                         navigate(-1);
-                        dispatch(SETCONNECTUI(false));
                         }}>
                         <ArrowLeftIcon className='w-[1rem] md:w-[1.2rem]' />
                     </div>

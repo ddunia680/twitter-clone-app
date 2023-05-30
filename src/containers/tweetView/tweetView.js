@@ -48,11 +48,7 @@ function TweetView(props) {
     useEffect(() => {
         if(io.getIO()) {
             io.getIO().on('gotComment', comm => {
-                console.log('notification reached');
-                console.log( tweet._id);
-                console.log(comm.commentTo);
                 if(tweet._id === comm.commentTo) {
-                    console.log('got a new comment');
                     setComments([...comments, comm]);
                 }
             })

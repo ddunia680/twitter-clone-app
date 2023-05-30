@@ -198,7 +198,11 @@ function UserIdentity(props) {
                 const notif = {
                     isFollow: true,
                     item: userId,
-                    by: userId,
+                    by: {
+                        userId: userId,
+                        profileUrl: profileUrl,
+                        fullname: fullname
+                    },
                     to: [otherUser._id]
                 }
                 io.getIO().emit('followedSomeone', notif);

@@ -9,6 +9,8 @@ function ToFollow(props) {
     const navigate = useNavigate();
     const token = useSelector(state => state.authenticate.token);
     const userId = useSelector(state => state.authenticate.userId);
+    const profileUrl = useSelector(state => state.authenticate.profileUrl);
+    const fullname = useSelector(state => state.authenticate.fullname);
     const [followStatus, setFollowStatus] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -41,7 +43,11 @@ function ToFollow(props) {
                 const notif = {
                     isFollow: true,
                     item: userId,
-                    by: userId,
+                    by: {
+                        userId: userId,
+                        profileUrl: profileUrl,
+                        fullname: fullname
+                    },
                     to: [props.user._id]
                 }
                 io.getIO().emit('followedSomeone', notif);

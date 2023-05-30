@@ -5,12 +5,22 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { SETSHOWLEFTSMENU } from '../../store/uiStates';
 import axios from 'axios';
+import io from '../../utility/socket';
+import sendNotif from '../../utility/sendNotif';
 
 function BottomMenu(props) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const token = useSelector(state => state.authenticate.token);
     const [notificationsCount, setNotificationsCount] = useState(0);
+
+    useEffect(() => {
+        if(!('Notification' in window)) {
+            console.log("browser doesn't support notifications");
+        } else {
+            Notification.requestPermission()
+        }
+    }, []);
 
     useEffect(() => {
         if(token) {
@@ -28,6 +38,44 @@ function BottomMenu(props) {
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
+
+     useEffect(() => {
+        if(io.getIO()) {
+            io.getIO().on('gotALike', (notif) => {
+                setNotificationsCount(notificationsCount + 1);
+                const options = {
+                        body: `${notif.by.fullname} liked your tweet`,
+                        icon: notif.by.profileUrl,
+                        dir: 'ltr'
+                    };
+
+                sendNotif({title: 'You got a new Like!', notif: {...options}})
+            })
+
+            io.getIO().on('gotAFollower', (notif) => {
+                setNotificationsCount(notificationsCount + 1);
+                const options = {
+                        body: `${notif.by.fullname} started following You`,
+                        icon: notif.by.profileUrl,
+                        dir: 'ltr'
+                    };
+
+                sendNotif({title: 'You got a new Follower!', notif: {...options}})
+            })
+
+            io.getIO().on('commentToMyTweet', (comment) => {
+                setNotificationsCount(notificationsCount + 1);
+                const options = {
+                        body: `${comment.by.fullname} commented on your tweet`,
+                        icon: comment.by.profileUrl,
+                        dir: 'ltr'
+                    };
+
+                sendNotif({title: 'You got a new Comment!', notif: {...options}})
+            })
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [io.getIO()]);
 
     const goToComponent = (comp) => {
         dispatch(SETSHOWLEFTSMENU(false));
