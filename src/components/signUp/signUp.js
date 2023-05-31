@@ -322,7 +322,7 @@ function SignUp(props) {
             <button className='px-[5rem] py-[0.5rem] rounded-full bg-blueSpecial text-xl text-darkClose font-semibold duration-75 hover:bg-white hover:duration-75 disabled:bg-gray-500 disabled:text-gray-600 disabled:cursor-not-allowed' disabled={!formIsValid || loading} onClick={() => signUpHandler()}>{ loading ? <Spinner/> : 'Sign Up'}</button>
             <div className='md:hidden w-[80%] flex justify-between items-center'>
                 <h3 className='text-md text-yellow-800' onClick={() => props.setInSignUp(false)}>Sign In?</h3>
-                <h3 className='text-md text-red-500'>Forgot password?</h3>
+                <h3 className='text-md text-red-500' onClick={() => props.setInForgotPassword(true)}>Forgot password?</h3>
             </div>
                 
         </div>

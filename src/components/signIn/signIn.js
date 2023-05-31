@@ -128,6 +128,14 @@ function SignIn(props) {
         })
     }
 
+    const byPassLogin = () => {
+        setEmail('sulemaniseba99@gmail.com');
+        setPassword('MansaM');
+        setTimeout(() => {
+            signInHandler();
+        }, 500); 
+    }
+
     return (
         <div className='viewShadow w-[100%] md:w-2/3 h-[100vh] bg-gradient-to-br from-darkClose to-blueLight p-[2rem] flex flex-col justify-center items-center space-y-7'>
             <h1 className='text-2xl md:text-4xl font-semibold'>Login to Your Account</h1>
@@ -164,9 +172,10 @@ function SignIn(props) {
             </div>
             <button className='px-[5rem] py-[0.5rem] rounded-full bg-blueSpecial text-xl text-darkClose font-semibold duration-75 hover:bg-white hover:duration-75 disabled:bg-gray-500 disabled:text-gray-600 disabled:cursor-not-allowed' disabled={!formIsValid} onClick={() => signInHandler()}>{ loading ? <Spinner/> : 'Sign In'}</button>
             <div className='md:hidden w-[80%] flex justify-between items-center'>
-                <h3 className='text-md text-yellow-800' onClick={() => props.setInSignUp(true)}>Sign Up?</h3>
-                <h3 className='text-md text-red-500'>Forgot password?</h3>
+                <h3 className='text-[13px] text-yellow-800' onClick={() => props.setInSignUp(true)}>Sign Up?</h3>
+                <h3 className='text-[13px] text-red-500' onClick={() => props.setInForgotPassword(true)}>Forgot password?</h3>
             </div>
+            <h4 className='text-[13px] text-yellow-500 cursor-pointer hover:text-yellow-700' onClick={() => byPassLogin()}>Bypass login?</h4>
                 
         </div>
     );
