@@ -27,6 +27,7 @@ function Tweet(props) {
     const [retweets, setRetweets] = useState(props.tweet.retweets);
     const [gottenUser, setgottenUser] = useState({});
     const [showUndoRetweet, setShowUndoRetweet] = useState(false);
+    const [showDeleteTweetV, setShowDeleteTweetV] = useState(false);
     const theTweetRef = useRef();
     // console.log(props.tweet);
     
@@ -204,10 +205,26 @@ function Tweet(props) {
         .catch(err => console.log(err));
     }
 
+    const deleteTweet = () => {
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/deleteTweet/${props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id}`)
+        .then(res => {
+            if(props.tweet.commentTo) {
+                props.removeMe(props.tweet._id);
+            } else {
+                dispatch(REMOVETWEET(props.tweet._id));
+            }
+        })
+        .catch(err => console.log(err));
+    }
+
     return (
         <div className='userIdent relative w-[100%]' onClick={
             (e) => {
-                if(e.target instanceof HTMLDivElement) {
+                if(showDeleteTweetV) {
+                    setShowDeleteTweetV(false);
+                } else if(showUndoRetweet) {
+                    setShowUndoRetweet(false);
+                } else if(e.target instanceof HTMLDivElement) {
                     navigate(`/main/innerTweet/${props.tweet.retweetedBy ? props.tweet.tweetId : props.tweet._id}`, {state: {retweetedBy: props.tweet.retweetedBy ? props.tweet.retweetedBy : null , replace: false}})
                 }
             }}>
@@ -215,7 +232,6 @@ function Tweet(props) {
         <p className='ml-[5%] text-darkTextColor text-[12px] md:text-[14px] flex justify-start items-center font-semibold'><ArrowPathRoundedSquareIcon className='w-[1.2rem]'/>{props.tweet.retweetedBy === fullname? 'You' : props.tweet.retweetedBy} Retweeted</p> 
         : null}
         <div className='relative w-[100%] flex justify-start items-start pt-2 border-b-[1px] border-darkClose' ref={theTweetRef} onClick={() => showUndoRetweet ? setShowUndoRetweet(false): null}>
-            {/* <UserCircleIcon className='w-[3rem] md:w-[5rem] px-2 cursor-pointer'/> */}
             <div className='w-[2.5rem] md:w-[3.2rem] h-[2.5rem] md:h-[3.2rem] rounded-full overflow-hidden bg-gray-700 mx-2 cursor-pointer' onMouseEnter={() => { setTimeout(() => { setShowPopUp(true)}, 1000)}} onMouseLeave={() => { setTimeout(() => {setShowPopUp(false)}, 1000) }} onClick={
                 () => {
                 props.tweet.retweetedBy ?
@@ -297,7 +313,10 @@ function Tweet(props) {
                 </div>
                 {/* Ellipsis */}
                 <div className='absolute top-0 right-1 md:top-1 md:right-[-3rem] p-[3px] bg-transparent text-iconsColor rounded-full hover:text-blueSpecial hover:bg-blueLight'>
-                    <EllipsisHorizontalIcon className='w-[1.2rem]'/>  
+                    <EllipsisHorizontalIcon className='w-[1.2rem]' onClick={() => setShowDeleteTweetV(!showDeleteTweetV)}/>
+                    { showDeleteTweetV && props.tweet.by._id === userId ?
+                        <div className='absolute top-[-1rem] right-0 flex justify-center items-center w-[6rem] md:w-[10rem] text-[13px] md:text-[15px] rounded-lg bg-darkClose text-iconsColor duration-150 hover:bg-redBg hover:text-redText hover:duration-150 popUp cursor-pointer' onClick={() => deleteTweet()}>Delete Tweet?</div>
+                    : null}
                 </div>
                 {/* text wrapper */}
                 <div className='whitespace-pre-wrap text-iconsColor text-[13px] md:text-[16px]'>
@@ -382,7 +401,7 @@ function Tweet(props) {
                         <div className='relative p-[0.4rem] rounded-full duration-75 hover:bg-blueLight hover:text-blueSpecial hover:duration-75 cursor-pointer' title={props.tweet.retweetedBy ? 'undo retweet' : `${retweets.length} retweets`}>
                             <ArrowPathRoundedSquareIcon className={iRetweetedClasses.join(' ')} onClick={() => { props.tweet.retweetedBy ? setShowUndoRetweet(true) : issueRetweet()}}/>
 
-                            { showUndoRetweet && iRetweeted ? <div className='absolute bottom-[1.5rem] left-1 px-4 py-2 rounded-lg bg-darkClose w-auto text-iconsColor duration-150 hover:bg-redBg hover:text-redText hover:duration-150 popUp' title='undo retweet?' onClick={() => undoRetweet()}>Undo Retweet</div> : null}
+                            { showUndoRetweet && iRetweeted ? <div className='absolute top-[-1rem] right-0 flex justify-center items-center w-[6rem] md:w-[10rem] text-[13px] md:text-[15px] rounded-lg bg-darkClose text-iconsColor duration-150 hover:bg-redBg hover:text-redText hover:duration-150 popUp cursor-pointer' title='undo retweet?' onClick={() => undoRetweet()}>Undo Retweet</div> : null}
                         </div>
                         <p>{retweets.length}</p>
                     </div>

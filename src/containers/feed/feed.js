@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { pullTweets } from '../../store/tweets';
 import Spinner from '../../UI/spinner/spinner';
 import { useNavigate } from 'react-router-dom';
+import { FOCUSONNEWTWEET } from '../../store/uiStates';
 
 function Feed(props) {
     const dispatch = useDispatch();
@@ -42,7 +43,7 @@ function Feed(props) {
     }
 
     return (
-        <div className='feed relative w-[100%] md:w-[50%] h-[93vh] md:h-[100vh] overflow-y-scroll flex flex-col justify-start items-start'>
+        <div className='feed relative w-[100%] md:w-[50%] h-[93vh] md:h-[100vh] overflow-y-scroll flex flex-col justify-start items-start' onScroll={() => dispatch(FOCUSONNEWTWEET(false))}>
             <FeedHead/>
             { window.innerWidth > 500 ? <TwitterInput/> : null}
             {theTweets}

@@ -33,6 +33,8 @@ function TwitterInput(props) {
     const [myLocation, setMyLocation] = useState('');
     const [showLocationView, setShowLocationView] = useState(false);
     const photosRef = useRef();
+    const thisComponent = useRef();
+    const theInput = useRef();
 
     const [photo1, setPhoto1] = useState(null);
     const [photo2, setPhoto2] = useState(null);
@@ -52,6 +54,19 @@ function TwitterInput(props) {
         }
     }, [theGif]);
     
+    useEffect(() => {
+        if(focusInput) {
+            thisComponent.current.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+                inline: 'nearest'
+            });
+            setTimeout(() => {
+                theInput.current.focus();
+            }, 500);
+            
+        }
+    }, [focusInput]);
 
     const sendTweetHandler = () => {
         setLoading(true);
@@ -91,7 +106,7 @@ function TwitterInput(props) {
     }
 
     return (
-        <div className='relative flex flex-col md:flex-row w-[100%] md:mt-[5.8rem] justify-start items-start border-b-[1px] border-darkClose py-3 px-2'>
+        <div className='relative flex flex-col md:flex-row w-[100%] md:mt-[5.8rem] justify-start items-start border-b-[1px] border-darkClose py-3 px-2' ref={thisComponent}>
             <div className='w-[100%] md:w-[5rem] flex justify-between items-center px-[0.5rem]'>
                 <div className='w-[3rem] h-[3rem] rounded-full overflow-hidden bg-gray-700'>
                     <img src={profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
@@ -100,7 +115,7 @@ function TwitterInput(props) {
             </div>
             
             <div className='flex flex-col justify-start items-start py-1 px-2 space-y-2 w-[100%]'>
-                <input type='text' placeholder="What's happening?" className='textarea h-[3rem] w-[85%] bg-transparent  focus:outline-none text-lg' onChange={e => setInputedText(e.target.value)} value={inputedText} autoFocus={focusInput}/>
+                <input type='text' placeholder="What's happening?" className='textarea h-[3rem] w-[85%] bg-transparent  focus:outline-none text-lg' ref={theInput} onChange={e => setInputedText(e.target.value)} value={inputedText} autoFocus={true}/>
                 {/* Location */}
                 { showLocationView ?
                     <div className='w-[100%] flex justify-start items-center'>

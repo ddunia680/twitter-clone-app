@@ -3,18 +3,16 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { SETONFOLLOWING, SETONFORYOU, SETONUPDATES, SETSHOWLEFTSMENU } from '../../store/uiStates';
+import { SETONFOLLOWING, SETONFORYOU, SETSHOWLEFTSMENU } from '../../store/uiStates';
 
 function FeedHead(props) {
     const dispatch = useDispatch();
     const onForYou = useSelector(state => state.uiStates.onForYou);
     const onFolliwing = useSelector(state => state.uiStates.onFolliwing);
-    const onUpdates = useSelector(state => state.uiStates.onUpdates);
     const profileUrl = useSelector(state => state.authenticate.profileUrl);
     
     const onForYouClasses = ['w-fit h-[100%] mx-auto border-b-[5px] text-sm md:text-md py-2', onForYou ? 'border-blueSpecial' : 'border-transparent'];
     const onFollowingClasses = ['w-fit h-[100%] mx-auto border-b-[5px] text-sm md:text-md py-2', onFolliwing ? 'border-blueSpecial' : 'border-transparent'];
-    const onUpdatesClasses = ['w-fit h-[100%] mx-auto border-b-[5px] text-sm md:text-md py-2', onUpdates ? 'border-blueSpecial' : 'border-transparent'];
     return (
             <div className='sticky md:fixed w-[100%] md:w-[50%] xl:w-[38%] h-[16vh] md:h-[12vh] bg-primary border-b-[1px] border-darkClose flex flex-col justify-between items-start backdrop-blur-md bg-opacity-80 z-20'>
                 {/* Title */}
@@ -32,17 +30,13 @@ function FeedHead(props) {
                 
                 {/* top nav */}
                 <div className='flex justify-between items-end w-[100%]'>
-                    <div className='w-1/3 h-[2.5rem] hover:bg-darkClose cursor-pointer' onClick={
+                    <div className='w-1/2 h-[2.5rem] hover:bg-darkClose cursor-pointer' onClick={
                         () => dispatch(SETONFORYOU())}>
                         <h4 className={onForYouClasses.join(' ')}>For you</h4>
                     </div>
-                    <div className='w-1/3 h-[2.5rem] hover:bg-darkClose cursor-pointer' onClick={
+                    <div className='w-1/2 h-[2.5rem] hover:bg-darkClose cursor-pointer' onClick={
                         () => dispatch(SETONFOLLOWING())}>
                         <h4 className={onFollowingClasses.join(' ')}>Following</h4>
-                    </div>
-                    <div className='w-1/3 h-[2.5rem] hover:bg-darkClose cursor-pointer' onClick={
-                        () => dispatch(SETONUPDATES())}>
-                        <h4 className={onUpdatesClasses.join(' ')}>Ukraine: updates</h4>
                     </div>
                 </div>
             </div>

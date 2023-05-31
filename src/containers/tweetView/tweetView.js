@@ -104,12 +104,16 @@ function TweetView(props) {
         })
     }
 
+    const removeComment = (id) => {
+        comments.filter(com => com._id !== id);
+    }
+
     let theComments = <p className='mx-auto text-gray-600 text-sm'>No Comments found</p>;
     if(pullingComments) {
         theComments = <div className='w-[100%] flex justify-center'><Spinner/></div>
     } else if(!pullingComments && comments.length) {
         theComments = comments.map(com => {
-            return <Tweet tweet={com} isComment={true} key={com._id}/>
+            return <Tweet tweet={com} isComment={true} key={com._id} removeMe={removeComment}/>
         })
     } else if(!pullingComments && !comments.length) {
         theComments = <p className='mx-auto text-gray-600 text-sm'>No Comments found</p>

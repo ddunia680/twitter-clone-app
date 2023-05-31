@@ -25,6 +25,7 @@ function App() {
   const token = useSelector(state => state.authenticate.token);
   const userId = useSelector(state => state.authenticate.userId);
   const expiryDate = localStorage.getItem('expiryDate');
+  const isVisible = useSelector(state => state.uiStates.showLeftMenu);
 
 useEffect(() => {
   if(token) {
@@ -100,7 +101,7 @@ useEffect(() => {
         <Route path='/notification' element={<Notification/>} />
         <Route path='*' element={token ? <MainView/> : <AuthContainer/>}/>
       </Routes>
-      { window.innerWidth <= 500 && token ? <BottomMenu/> : null}
+      { window.innerWidth <= 500 && token && !isVisible ? <BottomMenu/> : null}
     </div>
   );
 }

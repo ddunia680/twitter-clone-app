@@ -17,6 +17,10 @@ function AuthContainer(props) {
                 :
                     <button className='px-[5rem] py-[0.5rem] rounded-full bg-iconsColor text-xl text-darkClose font-semibold duration-75 hover:bg-white hover:duration-75' onClick={() => setInSignUp(!inSignUp)}>Sign In</button>
                 }
+
+                { !inSignUp ? 
+                    <p className='text-orange-700 font-semibold mx-auto'>Forgot Password?</p>
+                : null}
             </div>
         </div>
     );

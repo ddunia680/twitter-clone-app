@@ -87,7 +87,7 @@ function LeftMenu(props) {
     }, [io.getIO()]);
 
     return (
-        <div className='hidden md:flex relative w-[10%] xl:w-[20%] h-[100vh] flex-col justify-start items-center xl:items-start p-[1rem] border-r-[1px] border-darkClose space-y-2 font-mono'>
+        <div className='hidden md:flex relative w-[10%] xl:w-[20%] h-[100vh] flex-col justify-start items-center xl:items-start p-[1rem] border-r-[1px] border-darkClose space-y-2 font-mono' onClick={() => setShowLogout(!showLogout)}>
             {/* The bird */}
             <div className='p-[0.7rem] duration-75 rounded-full hover:bg-darkClose hover:duration-75 cursor-pointer'>
                 <FontAwesomeIcon icon={faTwitter} className='text-[2rem] text-iconsColor'/>
@@ -140,12 +140,6 @@ function LeftMenu(props) {
                 <h2 className='hidden xl:block text-xl text-iconsColor'>Bookmarks</h2>
             </div>
 
-            {/* Twitter Blue */}
-            {/* <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75'>
-                <HomeIcon className='w-[1.7rem]'/>
-                <h2 className='text-xl text-iconsColor'>Twitter Blue</h2>
-            </div> */}
-
             {/* Profile */}
             <div className='pl-[0.7rem] pr-[1rem] duration-75 h-[3rem] rounded-full flex justify-start items-center space-x-3 hover:bg-darkClose hover:duration-75 cursor-pointer' title='profile' onClick={() => navigate(`${userId}`)}>
                 <UserIcon className='w-[1.7rem]'/>
@@ -165,25 +159,34 @@ function LeftMenu(props) {
             </div>
 
             {/* Logged in user */}
-            <div className='absolute bottom-5 left-0 w-[90%] py-[1rem] px-[0.5rem] duration-75 flex justify-center xl:justify-start items-center rounded-full hover:bg-darkClose hover:duration-75 cursor-pointer'>
-                <div className='w-[3rem] h-[3rem] rounded-full overflow-hidden bg-gray-700' title={tagName} onClick={() => navigate(`${userId}`)}>
+            <div className='absolute bottom-5 left-0 w-[90%] py-[1rem] px-[0.5rem] duration-75 flex justify-center xl:justify-start items-center rounded-full hover:bg-darkClose hover:duration-75 cursor-pointer' onClick={() => setShowLogout(!showLogout)}>
+                <div className='w-[3rem] h-[3rem] rounded-full overflow-hidden bg-gray-700' title={tagName} onClick={() => {
+                    if(window.innerWidth <= 1300) {
+                        setShowLogout(!showLogout);
+                    } else {
+                        navigate(`${userId}`);
+                    }
+                    }}>
                     <img src={profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
                 </div>
-                {/* <UserCircleIcon className='text-gray-600 w-[3rem]'/> */}
                     <div className=' hidden xl:flex justify-between items-center w-[90%] pl-1'>
                         <div className='flex flex-col jusify-between items-start'>
                             <p className='text-gray-50 font-semibold md:w-[90%] whitespace-nowrap overflow-x-hidden overflow-ellipsis hover:underline' onClick={() => {
                                 navigate(`${userId}`);
-                                
                                 }}>{fullname}</p>
                             <p className='text-gray-400 md:w-[90%] whitespace-nowrap overflow-x-hidden overflow-ellipsis'>{tagName}</p>
                         </div>
                         <EllipsisHorizontalIcon className='w-[1.5rem] mx-1 rounded-full hover:text-blueSpecial hover:bg-blueLight' onClick={() => setShowLogout(!showLogout)}/>
                     </div>
-                    { showLogout ? <div className='absolute top-[-1rem] right-0 px-4 py-2 rounded-lg bg-darkClose text-iconsColor duration-150 hover:bg-redBg hover:text-redText hover:duration-150 popUp' onClick={() => {
+                    { showLogout ? 
+                    <div className='absolute top-[-1rem] left-[4rem] flex flex-col justify-start items-start z-30 rounded-lg popUp'>
+                        <div className='flex justify-center items-center w-[6rem] md:w-[10rem] text-[13px] md:text-[15px] rounded-tl-lg rounded-tr-lg bg-darkClose text-iconsColor duration-150 hover:bg-darkComponentVar hover:text-iconsColor hover:duration-150 cursor-pointer border-[1px] border-b-darkTextColor'onClick={() => navigate(`${userId}`)}>Your Identity?</div>
+
+                        <div className='flex justify-center items-center w-[6rem] md:w-[10rem] text-[13px] md:text-[15px] rounded-bl-lg rounded-br-lg bg-darkClose text-iconsColor duration-150 hover:bg-redBg hover:text-redText hover:duration-150cursor-pointer' onClick={() => {
                         setShowLogout(false);
                         dispatch(LOGOUT());
-                        }}>Logout</div> :null}                             
+                        }}>Logout</div>
+                    </div> :null}
             </div>
         </div>
     );

@@ -5,7 +5,6 @@ const uiStates = createSlice({
     initialState: {
         onForYou: true,
         onFolliwing: false,
-        onUpdates: false,
         showLeftMenu: false,
         onUserTweet: true,
         onUserReplies: false,
@@ -23,11 +22,6 @@ const uiStates = createSlice({
             state.onForYou = false;
             state.onFolliwing = true;
             state.onUpdates = false;
-        },
-        SETONUPDATES: (state, action) => {
-            state.onForYou = false;
-            state.onFolliwing = false;
-            state.onUpdates = true;
         },
         SETONUSERTWEETS: (state, action) => {
             state.onUserTweet = true;
@@ -64,8 +58,7 @@ const uiStates = createSlice({
 
 export const { 
     SETONFORYOU, 
-    SETONFOLLOWING, 
-    SETONUPDATES,
+    SETONFOLLOWING,
     SETONUSERTWEETS,
     SETONUSERREPLIES,
     SETONUSERMEDIA,

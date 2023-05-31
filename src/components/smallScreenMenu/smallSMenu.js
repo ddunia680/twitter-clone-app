@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { UserPlusIcon, UserIcon, ChatBubbleLeftIcon, BookmarkIcon, ListBulletIcon  } from '@heroicons/react/24/outline';
+import { UserPlusIcon, UserIcon, ChatBubbleLeftIcon, BookmarkIcon, ListBulletIcon, PlayIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import './smallSMenu.css';
 import { SETSHOWLEFTSMENU } from '../../store/uiStates';
 import { useNavigate } from 'react-router-dom';
+import { LOGOUT } from '../../store/authenticate';
 
 function SmallSMenu(props) {
     const dispatch = useDispatch();
@@ -16,6 +17,9 @@ function SmallSMenu(props) {
     const isVisible = useSelector(state => state.uiStates.showLeftMenu);
     const [following, setFollowing] = useState([]);
     const [followers, setFollowers] = useState([]);
+    const [showLogout, setShowLogout] = useState(false);
+
+    const moreIconClasses = ['font-bold w-[20px] duration-75', showLogout ? 'rotate-90 duration-75' : 'rotate-0 duration-75'];
 
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_BACKEND_URL}/followStatus/${userId}`)
@@ -39,7 +43,7 @@ function SmallSMenu(props) {
          navigate(`/underConst/${comp}`);
     }
 
-    const Mclasses = ['w-[80%] bg-closestToPrimary h-[100vh] py-[3px] px-[1rem] border-r-[1px] border-darkComponent flex flex-col', isVisible ? 'mountSlide' : 'unmountSlide'];
+    const Mclasses = ['relative w-[80%] bg-closestToPrimary h-[100vh] py-[3px] px-[1rem] border-r-[1px] border-darkComponent flex flex-col', isVisible ? 'mountSlide' : 'unmountSlide'];
 
     return (
         <div className={Mclasses.join(' ')}>
@@ -91,8 +95,19 @@ function SmallSMenu(props) {
                     <UserIcon className='font-bold w-[20px]' />
                     <p className='font-bold text-[17px]'>Twitter Circles</p>
                 </div>
+                {/* More */}
+                <div className='w-[100%] flex justify-start items-center space-x-[1rem] text-iconsColor' onClick={() => setShowLogout(!showLogout)}>
+                    <PlayIcon className={moreIconClasses.join(' ')} />
+                    <p className='font-bold text-[17px]'>More</p>
+                </div>
+                { showLogout ?
+                    <div className='ml-[2rem] bg-darkComponentVar px-[1.5rem] rounded-lg' onClick={() => {
+                        dispatch(SETSHOWLEFTSMENU(false));
+                        dispatch(LOGOUT());
+                    }}>Logout</div>
+                :null}
             </div>
-            <p className='mt-[4rem] text-[10px] text-gray-500 text-center'>My Twitter app &copy; 2023</p>
+            <p className='absolute bottom-[2rem] left-[30%] text-[10px] text-gray-500'>My Twitter app &copy; 2023</p>
         </div>
     );
 }

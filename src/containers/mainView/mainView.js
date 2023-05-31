@@ -26,7 +26,7 @@ function MainView(props) {
                      
                 : null}
                 { isVisible ? 
-                    <div className='h-[100vh> bg-gray-950 text-gray-950' onClick={() => dispatch(SETSHOWLEFTSMENU(false))}>
+                    <div className='h-[100vh] w-[20%] bg-primary text-primary' onClick={() => dispatch(SETSHOWLEFTSMENU(false))}>
                         well
                     </div>
                 : <Feed/> }
