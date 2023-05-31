@@ -36,4 +36,6 @@ router.get('/getNotifications', isAuth, tweetControllers.getNotifications);
 
 router.post('/notificationSeen/:id', tweetControllers.notificationSeen);
 
+router.post('/deleteTweet/:id', tweetControllers.deleteTweet);
+
 module.exports = router;

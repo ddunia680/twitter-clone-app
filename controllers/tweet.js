@@ -788,122 +788,6 @@ exports.postTweet = async (req, res) => {
     })
  }
 
-//code to be revisited tearlier tomorrow!
-
-//  exports.issueRetweet = (req, res) => {
-//     const retweetedBy = req.params.id;
-//     const tweetId = req.params.tweetId;
-
-//     Tweet.findById(tweetId).populate('by', {password: 0})
-//     .then(tweet => {
-//         if(!tweet) {
-//             Comment.findById(tweetId)
-//             .then(comment => {
-//                 comment.retweets.push(retweetedBy);
-//                 comment.save()
-//                 .then(update1 => {
-//                     const retweet = new Retweet({
-//                         retweetedBy: retweetedBy,
-//                         tweet: update1._id
-//                     })
-//                     return retweet.save();
-//                 })
-//                 .then(updated2 => {
-//                     Retweet.findById(updated2._id).populate('retweetedBy', {password: 0}).populate('tweet')
-//                     .then(retweet => {
-//                         const theRetweet = {
-//                             _id: retweet._id,
-//                             tweetId: retweet.tweet._id,
-//                             retweetedBy: retweet.retweetedBy.fullname,
-//                             by: comment.by,
-//                             text: retweet.tweet.text,
-//                             media: retweet.tweet.media,
-//                             location: retweet.tweet.location,
-//                             likes: retweet.tweet.likes,
-//                             retweets: retweet.tweet.retweets,
-//                             views: retweet.tweet.views,
-//                             comment: retweet.tweet.comment,
-//                             createdAt: retweet.createdAt
-//                         }
-//                         res.status(201).json({
-//                             retweet: theRetweet
-//                         })
-//                     })
-//                     .catch(err => {
-//                         console.log(err);
-//                         res.status(500).json({
-//                             message: 'something went wrong server-side'
-//                         })
-//                     })
-//                 })
-//                 .catch(err => {
-//                     console.log(err);
-//                     res.status(500).json({
-//                         message: 'something went wrong server-side'
-//                     })
-//                 })
-//             })
-//             .catch(err => {
-//                 console.log(err);
-//                 res.status(500).json({
-//                     message: 'something went wrong server-side'
-//                 })
-//             })
-//         } else {
-//             tweet.retweets.push(retweetedBy);
-//             tweet.save()
-//             .then(update1 => {
-//                 const retweet = new Retweet({
-//                     retweetedBy: retweetedBy,
-//                     tweet: update1._id
-//                 })
-//                 return retweet.save();
-//             })
-//             .then(updated2 => {
-//                 // This needs to be arranged to operate like a normal tweet with just two extra attribute
-//                 Retweet.findById(updated2._id).populate('retweetedBy', {password: 0}).populate('tweet')
-//                 .then(retweet => {
-//                     const theRetweet = {
-//                         _id: retweet._id,
-//                         tweetId: retweet.tweet._id,
-//                         retweetedBy: retweet.retweetedBy.fullname,
-//                         by: tweet.by,
-//                         text: retweet.tweet.text,
-//                         media: retweet.tweet.media,
-//                         location: retweet.tweet.location,
-//                         likes: retweet.tweet.likes,
-//                         retweets: retweet.tweet.retweets,
-//                         views: retweet.tweet.views,
-//                         comment: retweet.tweet.comment,
-//                         createdAt: retweet.createdAt
-//                     }
-//                     res.status(201).json({
-//                         retweet: theRetweet
-//                     })
-//                 })
-//                 .catch(err => {
-//                     console.log(err);
-//                     res.status(500).json({
-//                         message: 'something went wrong server-side'
-//                     })
-//                 })
-//             })
-//             .catch(err => {
-//                 console.log(err);
-//                 res.status(500).json({
-//                     message: 'something went wrong server-side'
-//                 })
-//             })
-//         }
-//     })
-//     .catch(err => {
-//         console.log(err);
-//         res.status(500).json({
-//             message: 'something went wrong server-side'
-//         })
-//     })
-//  }
-
 exports.storeNotification = (req, res) => {
     const notification = new Notification({
         isTweet: req.body.isTweet ? req.body.isTweet : false,
@@ -984,5 +868,34 @@ exports.notificationSeen = (req, res) => {
         res.status(500).json({
             message: 'something went wrong server-side'
         })
+    })
+}
+
+exports.deleteTweet = (req, res) => {
+    const tweetId = req.params.id;
+
+    Tweet.findByIdAndDelete(tweetId)
+    .then(tweet => {
+        if(!tweet) {
+            Comment.findByIdAndDelete(tweetId)
+            .then(comment => {
+                Comment.deleteMany({commentTo: tweetId})
+                .then(comments => {
+                    res.status(200).json({
+                        message: 'successfully deleted tweet'
+                    })
+                })
+                .catch(err => res.status(500).json({message: 'something went wrong'}));
+            })
+            .catch(err => res.status(500).json({message: 'something went wrong'}));
+        } else {
+            Comment.deleteMany({commentTo: tweetId})
+            .then(comments => {
+                res.status(200).json({
+                    message: 'successfully deleted tweet'
+                })
+            })
+            .catch(err => res.status(500).json({message: 'something went wrong'}));
+        }
     })
 }

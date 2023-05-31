@@ -47,4 +47,11 @@ router.post('/login', [
 
 router.post('/updateuser', isAuth, authController.updateUser);
 
+router.get('/getCode/:email', authController.getCode);
+
+router.post('/updatePass', [
+    body('password').trim().isLength({min: 5}).withMessage('wrong password'),
+    body('confirmPass').trim().isLength({min: 5}).withMessage('wrong confirm password')
+], authController.updatePassword);
+
 module.exports = router;
