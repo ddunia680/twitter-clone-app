@@ -291,9 +291,11 @@ function UserIdentity(props) {
                 {/* first slice */}
                 <div className='relative w-[100%] h-[5rem] md:h-[12rem] bg-gray-700'>
                     {/* Cover image */}
-                    { coverUrl && isMe ? <img src={coverUrl} alt='' className='w-[100%] h-[100%] object-contain'/> :
-                    <img src={otherUser.coverUrl} alt='' className='w-[100%] h-[100%] object-contain'/>}
+                    <div className='overflow-hidden w-[100%] h-[100%]'>
+                    { coverUrl && isMe ? <img src={coverUrl} alt='' className='w-100 h-100 object-cover'/> :
+                    <img src={otherUser.coverUrl} alt='' className='w-100 h-100 object-cover'/>}
                     {/* Small screens up menu */}
+                    </div>
                     { window.innerWidth <= 500 ?
                         <div className='fixed top-0 left-0 flex justify-between items-center w-[100%] px-2 py-1'>
                             <div className='flex cursor-pointer text-iconsColor justify-start items-center space-x-2' title='Back'>
