@@ -131,9 +131,6 @@ function SignIn(props) {
     const byPassLogin = () => {
         setEmail('sulemaniseba99@gmail.com');
         setPassword('MansaM');
-        setTimeout(() => {
-            signInHandler();
-        }, 500); 
     }
 
     return (
