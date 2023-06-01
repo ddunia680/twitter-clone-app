@@ -6,10 +6,6 @@ import Tweet from '../tweet/tweet';
 import LeftMenu from '../../containers/leftMenu/leftMenu';
 import RightMenu from '../../containers/rightMenu/rightMenu';
 
-
-import mum from '../../images/mum.jpg';
-import dad from '../../images/dad.jpg';
-import cecile from '../../images/cecile3.JPG';
 import { useDispatch, useSelector } from 'react-redux';
 import { SETONUSERLIKES, SETONUSERMEDIA, SETONUSERREPLIES, SETONUSERTWEETS } from '../../store/uiStates';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -383,20 +379,21 @@ function UserIdentity(props) {
                     <h4 className='text-darkTextColor text-sm cursor-pointer hover:underline' onClick={() => {goToFollowCenter(false)}}><span className='font-bold text-iconsColor'>{followers.length}</span>Followers</h4>
                 </div>
 
-                <div className='flex justify-start items-center w-[100%] mt-2 px-[1rem] cursor-pointer'>
+                { followers.length ? <div className='flex justify-start items-center w-[100%] mt-2 px-[1rem] cursor-pointer'>
                     <div className='flex justify-start items-center'>
                         <div className='relative w-[1.5rem] h-[1.5rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer border-[2px] border-black'>
-                            <img src={dad} alt='' className='w-[100%] h-[100%] object-contain'/>
+                            <img src={followers[0].profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
                         </div>
-                        <div className='absolute left-[1.5rem] w-[1.5rem] h-[1.5rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer border-[2px] border-black'>
-                            <img src={mum} alt='' className='w-[100%] h-[100%] object-contain'/>
-                        </div>
-                        <div className='absolute left-[2rem] w-[1.5rem] h-[1.5rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer border-[2px] border-black'>
-                            <img src={cecile} alt='' className='relative w-[100%] h-[100%] object-contain'/>
-                        </div>
+                        { followers[1] ? <div className='absolute left-[1.5rem] w-[1.5rem] h-[1.5rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer border-[2px] border-black'>
+                            <img src={followers[1].profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
+                        </div> : null}
+                        { followers[2] ? <div className='absolute left-[2rem] w-[1.5rem] h-[1.5rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer border-[2px] border-black'>
+                            <img src={followers[2].profileUrl} alt='' className='relative w-[100%] h-[100%] object-contain'/>
+                        </div> : null}
                     </div>
-                    <p className='ml-5 text-sm text-darkTextColor leading-[15px]'> Followed by dad, sis cecile, mum, charles and 5 others you follow</p>
+                    <p className='ml-5 text-sm text-darkTextColor leading-[15px]'> Followed by {followers[0].fullname.split(' ')[0]}{followers[1] ? `, ${followers[1].fullname.split(' ')[0]}`: null}{followers[2] ? `, ${followers[2].fullname.split(' ')[0]}`: null} { followers.length > 3 ? `and ${followers.length - 3} others you follow` : null}</p>
                 </div>
+                : null}
 
                 <div className='sticky top-0 md:top-[3.5rem] flex justify-between items-center bg-primary bg-opacity-80 mt-4 w-[100%] h-[2.5rem] md:h-[3.5rem] border-b-[1px] border-darkClose z-10'>
                     <div className='w-1/4 h-[100%] hover:bg-darkClose cursor-pointer' onClick={

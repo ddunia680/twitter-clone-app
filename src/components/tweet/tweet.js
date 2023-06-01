@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/solid';
 import { ChatBubbleBottomCenterIcon, ArrowDownTrayIcon, ArrowPathRoundedSquareIcon, HeartIcon, ChartBarIcon } from '@heroicons/react/24/outline';
-import mum from '../../images/mum.jpg';
-import dad from '../../images/dad.jpg';
-import cecile from '../../images/cecile3.JPG';
 import './tweet.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -294,20 +291,26 @@ function Tweet(props) {
                                 <h4 className='text-darkTextColor text-sm'><span className='font-bold text-iconsColor'>{ props.tweet.retweetedBy? gottenUser.following.length : props.tweet.by.following.length}</span>Following</h4>
                                 <h4 className='text-darkTextColor text-sm'><span className='font-bold text-iconsColor'>{ props.tweet.retweetedBy? gottenUser.followers.length : props.tweet.by.followers.length}</span>Followers</h4>
                             </div>
-                            <div className='flex justify-start items-start w-[100%] mt-2'>
-                                <div className='flex justify-start items-center'>
-                                    <div className='relative w-[1.5rem] h-[1.5rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer border-[2px] border-black'>
-                                        <img src={dad} alt='' className='w-[100%] h-[100%] object-contain z-0'/>
+                            {props.tweet.retweetedBy? gottenUser.followers.length : props.tweet.by.followers.length ?
+                                <div className='flex justify-start items-start w-[100%] mt-2'>
+                                    <div className='flex justify-start items-center'>
+                                        <div className='relative w-[1.5rem] h-[1.5rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer border-[2px] border-black'>
+                                            <img src={props.tweet.retweetedBy? gottenUser.followers[0].profileUrl : props.tweet.by.followers[0].profileUrl} alt='' className='w-[100%] h-[100%] object-contain z-0'/>
+                                        </div>
+                                        { props.tweet.retweetedBy? gottenUser.followers[1] : props.tweet.by.followers[1] ?
+                                            <div className='absolute left-[1.5rem] w-[1.5rem] h-[1.5rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer border-[2px] border-black'>
+                                                <img src={props.tweet.retweetedBy? gottenUser.followers[1].profileUrl : props.tweet.by.followers[1].profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
+                                            </div>
+                                        : null}
+                                        { props.tweet.retweetedBy? gottenUser.followers[2] : props.tweet.by.followers[2] ?
+                                            <div className='absolute left-[2rem] w-[1.5rem] h-[1.5rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer border-[2px] border-black'>
+                                                <img src={props.tweet.retweetedBy? gottenUser.followers[2].profileUrl : props.tweet.by.followers[2].profileUrl} alt='' className='relative w-[100%] h-[100%] object-contain'/>
+                                            </div>
+                                        : null}
                                     </div>
-                                    <div className='absolute left-[1.5rem] w-[1.5rem] h-[1.5rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer border-[2px] border-black'>
-                                        <img src={mum} alt='' className='w-[100%] h-[100%] object-contain'/>
-                                    </div>
-                                    <div className='absolute left-[2rem] w-[1.5rem] h-[1.5rem] rounded-full overflow-hidden bg-gray-700 cursor-pointer border-[2px] border-black'>
-                                        <img src={cecile} alt='' className='relative w-[100%] h-[100%] object-contain'/>
-                                    </div>
+                                    <p className='ml-5 text-sm text-darkTextColor leading-[15px]'> followers</p>
                                 </div>
-                                <p className='ml-5 text-sm text-darkTextColor leading-[15px]'> Followed by dad, sis cecile, mum, charles and 5 others you follow</p>
-                            </div>
+                            : null}
                         </div>
                     :null}
                 </div>

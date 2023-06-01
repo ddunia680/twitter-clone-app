@@ -68,7 +68,7 @@ function ConnectView(props) {
                     {theUsersArray}
                 </div>
             </div>
-            <RightMenu/>
+            { window.innerWidth > 500 ? <RightMenu/> : null}
             <BottomMenu/>
         </div>
     );
