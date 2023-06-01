@@ -308,7 +308,7 @@ function Tweet(props) {
                                             </div>
                                         : null}
                                     </div>
-                                    <p className='ml-5 text-sm text-darkTextColor leading-[15px]'> followers</p>
+                                    <p className='ml-5 text-sm text-darkTextColor leading-[15px]'> Followed by {props.tweet.retweetedBy? gottenUser.followers[0].fullname.split(' ')[0] : props.tweet.by.followers[0].fullname.split(' ')[0]} and {props.tweet.retweetedBy? gottenUser.followers.length - 1 : props.tweet.by.followers.length - 1} people</p>
                                 </div>
                             : null}
                         </div>
