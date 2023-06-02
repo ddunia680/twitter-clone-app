@@ -255,7 +255,9 @@ function TweetView(props) {
                                 <img src={profileUrl} alt='' className='w-[100%] h-[100%] object-contain'/>
                             </div>
                             <div className='relative w-[80%] flex flex-col justify-start items-start'>
-                                <input type='text' placeholder="Tweet your reply" className='textarea h-[3rem] w-[100%] bg-transparent text-[14px] focus:outline-none md:text-lg border-b-[1px] border-darkClose'onChange={e => setMyReply(e.target.value)} value={myReply}/>
+                                <input type='text' placeholder="Tweet your reply" className='textarea h-[3rem] w-[100%] bg-transparent text-[14px] focus:outline-none md:text-lg border-b-[1px] border-darkClose'onChange={e => setMyReply(e.target.value)} value={myReply} onKeyDown={e => {
+                                    e.key === 'Enter' && myReply && sendReplyHandler();
+                                }}/>
 
                                 <div className='w-[100%] py-[0.5rem] flex justify-start items-center space-x-[1rem]'>
                                     <input type='file' className='hidden' ref={photosRef} onChange={e => {
