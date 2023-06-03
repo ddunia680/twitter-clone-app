@@ -116,7 +116,7 @@ function TwitterInput(props) {
             
             <div className='flex flex-col justify-start items-start py-1 px-2 space-y-2 w-[100%]'>
                 <input type='text' placeholder="What's happening?" className='textarea h-[3rem] w-[85%] bg-transparent  focus:outline-none text-lg' ref={theInput} onChange={e => setInputedText(e.target.value)} value={inputedText} autoFocus={true} onKeyDown={e => {
-                    e.key === 'Enter' && inputedText && sendTweetHandler()
+                    e.key === 'Enter' && inputedText.trim() && sendTweetHandler()
                 }}/>
                 {/* Location */}
                 { showLocationView ?

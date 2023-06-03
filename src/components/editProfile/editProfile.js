@@ -236,8 +236,8 @@ function EditProfile(props) {
                 { window.innerWidth > 500 ?  
                     <div className='sticky top-0 left-0 bg-primary bg-opacity-80 w-[100%] z-10 md:flex justify-between items-center space-x-2 md:space-x-4 px-2 border-b-[1px] border-darkClose'>
                         <div className='flex justify-start items-center space-y-2'>
-                            <div className='p-[0.7rem] bg-transparent text-iconsColor rounded-full hover:bg-darkComponent' onClick={() => navigate('/main')}>
-                                <ArrowLeftIcon className='w-[1rem] md:w-[1.2rem]' />
+                            <div className='p-[0.7rem] bg-transparent text-iconsColor rounded-full hover:bg-darkComponent' onClick={() => navigate(-1)}>
+                                <ArrowLeftIcon className='w-[1rem] md:w-[1.2rem]' title='cancel'/>
                             </div>
                             <div className='flex flex-col justify-between items-start'>
                                 <h3 className='text-md md:text-xl font-semibold md:font-bold flex justify-start items-center'> Edit Profile</h3>
